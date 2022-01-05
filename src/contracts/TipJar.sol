@@ -5,9 +5,43 @@ pragma solidity ^0.8.4; //same as hardhat.config.js
 import 'hardhat/console.sol'; // This allow you to use console.log
 
 contract TipJar {
-	uint256 public totalTips; // store the number of the tips received;
+	uint256 totalTips; // store the number of the tips received;
+
+	address payable owner; //owner of the contract
+
+	/*
+	 * Store the "Tip" data in a structure
+	 * the struct allow you to create a custom datatype
+	 */
+	struct Tip {
+		address sender; //The person who gives you the tip
+		string message; //A message from the sender;
+		string name; //THe name of the sender
+		uint256 timestamp; //When the tip was sent
+		uint256 amount; //the amount of ether sent to you
+	}
+	/*
+    store an array of structs to hold all the tips sent
+    */
+	Tip[] tips;
 
 	constructor() {
-		console.log('Tip Jar Smart Contract');
+		owner = payable(msg.sender); // set the contract creator based in who instantiated it
+	}
+
+	/*
+	 * public funtion (like a getter) that returns the total number of tips
+	 * is marked as public and as a view, meaning that only reads from the blockchain so is gas free
+	 * In a function you should declare what it returns
+	 */
+	function getTotalTips() public view returns (uint256) {
+		return totalTips;
+	}
+
+	function sendTip(string memory _message, string memory _name) public payable {
+		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
+		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
+		totalTips += 1; //increase the amount of tips
+		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 	}
 }
