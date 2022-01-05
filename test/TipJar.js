@@ -33,5 +33,24 @@ describe("TipJar", function () { //describe the main test
         expect(await contract.getTotalTips()).to.equal(1); // Get the total number of tips
     })
 
+    it('should return all the tips', async function () {
+        const amount = ethers.utils.parseEther("0.002");
+
+        const [owner, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+        // Perform another transaction
+        const tx = await contract.connect(sender).sendTip('2nd message', '2nd name', { value: amount });
+        await tx.wait();
+        const tips = await contract.getAllTips();
+        // Since this test ran in the same contract instance as before the total number of tips should be 2
+        expect(await contract.getTotalTips()).to.equal(2);
+        // The lenght of the tips arrray should be 2 too
+        expect(tips.length).to.equal(2);
+        // The second element of the tips array should be the same as the transaction sent
+        expect(tips[1].message).to.equal('2nd message')
+        // The amount of the second element of the tips array should be the same as the transaction sent
+        expect(tips[1].amount).to.be.equal(amount)
+
+    })
+
 
 });

@@ -44,4 +44,12 @@ contract TipJar {
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 	}
+
+	/*
+	 * a function that give access to the stored tips struct
+	 * is just read from the blockchain so is marked as view
+	 */
+	function getAllTips() public view returns (Tip[] memory) {
+		return tips;
+	}
 }
