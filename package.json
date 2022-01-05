@@ -7,7 +7,14 @@
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
-		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
+		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
+		"hardhat": "hardhat --config hardhat.config.cjs",
+		"hardhat:compile": "npm run hardhat compile",
+		"hardhat:run": "npm run hardhat run scripts/run.js",
+		"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
+		"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js --network rinkeby",
+		"hardhat:test": "npm run hardhat test"
+
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
