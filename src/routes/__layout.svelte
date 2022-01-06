@@ -2,4 +2,6 @@
 	import '../app.css';
 </script>
 
-<slot />
+<div class="w-full h-screen bg-gray-200 flex items-center flex-col p-32">
+	<slot />
+</div>
