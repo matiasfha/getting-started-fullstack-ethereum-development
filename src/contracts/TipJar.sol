@@ -25,6 +25,13 @@ contract TipJar {
     */
 	Tip[] tips;
 
+	/*
+	 * Solidity magic, this defines an Event that can be trigger and sent to the clients
+	 * it will hold the address that trigger the event and will index that to allow for future search
+	 * it can also hold more information,. in this case the message, name and amount same as the struct above
+	 */
+	event NewTip(address indexed from, string message, string name, uint256 amount);
+
 	constructor() {
 		owner = payable(msg.sender); // set the contract creator based in who instantiated it
 	}
@@ -43,6 +50,9 @@ contract TipJar {
 		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
+
+		// send the event
+		emit NewTip(msg.sender, _message, _name, msg.value);
 	}
 
 	/*

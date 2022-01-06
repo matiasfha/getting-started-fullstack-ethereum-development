@@ -52,5 +52,15 @@ describe("TipJar", function () { //describe the main test
 
     })
 
+    it('should react to the tip event', async function () {
+        const amount = ethers.utils.parseEther("0.002");
+
+        const [owner, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+        // Perform another transaction
+        const tx = await contract.connect(sender).sendTip('event message', 'name', { value: amount });
+        await expect(tx).to.emit(contract, 'NewTip').withArgs(sender.address, 'event message', 'name', amount);
+
+    })
+
 
 });
