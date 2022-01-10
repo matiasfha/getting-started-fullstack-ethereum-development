@@ -11,14 +11,15 @@
 		"hardhat": "hardhat --config hardhat.config.cjs",
 		"hardhat:compile": "npm run hardhat compile",
 		"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
-		"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js --network rinkeby",
+		"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js -- --network rinkeby",
 		"hardhat:test": "npm run hardhat test"
-
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/adapter-vercel": "1.0.0-next.35",
 		"@sveltejs/kit": "next",
 		"autoprefixer": "^10.4.0",
+		"dotenv": "10.0.0",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^3.2.1",
@@ -32,9 +33,11 @@
 	"dependencies": {
 		"@nomiclabs/hardhat-ethers": "2.0.3",
 		"@nomiclabs/hardhat-waffle": "2.0.1",
+		"@walletconnect/web3-provider": "1.6.6",
 		"chai": "4.3.4",
 		"ethereum-waffle": "3.4.0",
 		"ethers": "5.5.2",
-		"hardhat": "2.8.0"
+		"hardhat": "2.8.0",
+		"web3modal": "1.9.5"
 	}
 }

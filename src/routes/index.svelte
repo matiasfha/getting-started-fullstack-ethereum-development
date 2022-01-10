@@ -10,7 +10,7 @@
 	let network = null;
 	let balance = null;
 	let isConnected = false;
-	let contractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3'; //this can be an ENS
+	let contractAddress = '0xDc88da244C7C78eF98a5E7e05C77272585baa2Ae'; //this can be an ENS
 	let contract = null;
 	let tipContract = null;
 	let allTips = [];
@@ -22,6 +22,8 @@
 			tipContract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
 
 			contract.on('NewTip', async () => {
+				// Mining process end
+				sendingTip = false;
 				// update balance
 				balance = await provider.getBalance(userAddress);
 				// update the tips
@@ -35,16 +37,7 @@
 			// ethereum is an object injected by the wallet. Let's check if is available
 			const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); // use the request method to get the accounts, aka logging in to Metamask
 			if (accounts.length > 0) {
-				// it returns an array of accounts, it should have at least 1 element
-				userAddress = accounts[0]; // update the state
-				// Get and update the ethereum provider
-				provider = new ethers.providers.Web3Provider(window.ethereum);
-				network = await provider.getNetwork();
-				balance = await provider.getBalance(userAddress);
-				isConnected = true;
-				setupContract();
-				getTips();
-				await addEthereumListeners();
+				await setup(accounts);
 			} else {
 				alert('No ethereum accounts found');
 			}
@@ -80,7 +73,6 @@
 			value: ethers.utils.parseEther(data.amount)
 		});
 		await transaction.wait();
-		sendingTip = false;
 	}
 
 	async function getTips() {
@@ -105,22 +97,51 @@
 		if (window.ethereum) {
 			const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // get the accounts
 			if (accounts.length > 0) {
-				// it returns an array of accounts, it should have at least 1 element
-				userAddress = accounts[0]; // update the state
-				// Get and update the ethereum provider
-				provider = new ethers.providers.Web3Provider(window.ethereum);
-				network = await provider.getNetwork();
-				balance = await provider.getBalance(userAddress);
-				isConnected = true;
-				setupContract();
-				getTips();
-				await addEthereumListeners();
+				await setup(accounts);
 			}
 		}
 	});
+
+	async function setup(accounts) {
+		// it returns an array of accounts, it should have at least 1 element
+		userAddress = accounts[0]; // update the state
+		// Get and update the ethereum provider
+		provider = new ethers.providers.Web3Provider(window.ethereum);
+		network = await provider.getNetwork();
+		balance = await provider.getBalance(userAddress);
+		isConnected = true;
+		setupContract();
+		getTips();
+		await addEthereumListeners();
+	}
 </script>
 
 <h1 class="text-3xl text-gray-800 p-8">Welcome to my Eth Tip Jar</h1>
+<div class="text-sm text-gray-500 pb-4 flex flex-col gap-4">
+	<p>This is a web3 application for teaching purposes running on Rinkeby.</p>
+
+	<p>Make sure to use fake eth that you requested from a faucet like:</p>
+	<ul class="list-disc list-inside">
+		<li>
+			<a href="https://app.mycrypto.com/faucet" class="underline text-indigo-400">MyCripto</a>
+		</li>
+		<li>
+			<a href="https://buildspace-faucet.vercel.app/" class="underline text-indigo-400"
+				>Buildspace</a
+			>
+		</li>
+		<li>
+			<a href="https://ethily.io/rinkeby-faucet/" class="underline text-indigo-400">Ethily</a>
+		</li>
+		<li>
+			<a href="https://faucet.rinkeby.io/" class="underline text-indigo-400">Official Rinkeby</a>
+		</li>
+		<li>
+			<a href="https://faucets.chain.link/rinkeby" class="underline text-indigo-400">Chainlink</a>
+		</li>
+	</ul>
+	<p class="text-md text-red-600">This will send ETH to the owner of the contract!</p>
+</div>
 
 {#if isConnected}
 	<p class="text-xl text-green-600">

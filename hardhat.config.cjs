@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
-
+require('dotenv').config();
+console.log(process.env.ALCHEMY_API_URL);
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -12,6 +13,10 @@ module.exports = {
   networks: {
     hardhat: {
       chainId: 1337 // To be able to work with metamask
+    },
+    rinkeby: {
+      url: process.env.ALCHEMY_API_URL,
+      accounts: [process.env.PRIVATE_RINKEBY_ACCOUNT_KEY]
     }
   }
 };
