@@ -1,6 +1,5 @@
 <script>
-	import { ethers, utils } from 'ethers';
-	import { formatEther, parseUnits } from 'ethers/lib/utils';
+	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
 	import TipJarABI from '../artifacts/src/contracts/TipJar.sol/TipJar.json';
 
@@ -149,7 +148,7 @@
 	</p>
 	<ul>
 		<li>Current Network: {network.name}</li>
-		<li>Your current balance: {formatEther(balance)} eth</li>
+		<li>Your current balance: {ethers.utils.formatEther(balance)} eth</li>
 	</ul>
 
 	<form
