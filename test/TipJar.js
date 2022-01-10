@@ -1,4 +1,5 @@
 const { expect } = require("chai"); // Require the assertion library
+const { providers } = require("ethers");
 const { ethers } = require("hardhat");
 
 describe("TipJar", function () { //describe the main test
@@ -16,7 +17,7 @@ describe("TipJar", function () { //describe the main test
     it('Should allow to send a tip and increase the number of total tips', async function () {
         const [owner, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender
         const balance = await owner.getBalance(); // Get the account balance of the owner
-
+        const senderBalance = await sender.getBalance();
         /*
         * perform the send transaction
         * You pass the message and the name as arguments and the value as an object that is then
@@ -28,15 +29,17 @@ describe("TipJar", function () { //describe the main test
 
 
         const newBalance = await owner.getBalance(); // Get the new balance of the owner account
+        const newSenderBalance = await sender.getBalance();
 
         expect(newBalance).to.be.above(balance) // Check that the new balance if greater than before
+        expect(newSenderBalance).to.be.below(senderBalance);
         expect(await contract.getTotalTips()).to.equal(1); // Get the total number of tips
     })
 
     it('should return all the tips', async function () {
         const amount = ethers.utils.parseEther("0.002");
 
-        const [owner, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+        const [, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
         // Perform another transaction
         const tx = await contract.connect(sender).sendTip('2nd message', '2nd name', { value: amount });
         await tx.wait();
@@ -52,13 +55,21 @@ describe("TipJar", function () { //describe the main test
 
     })
 
-    it('should react to the tip event', async function () {
-        const amount = ethers.utils.parseEther("0.002");
-
-        const [owner, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+    it('should fail to send eth bigger than the balance', async function () {
+        const [, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+        const amount = ethers.utils.parseEther("9999");
         // Perform another transaction
-        const tx = await contract.connect(sender).sendTip('event message', 'name', { value: amount });
-        await expect(tx).to.emit(contract, 'NewTip').withArgs(sender.address, 'event message', 'name', amount);
+        const tx = contract.connect(sender).sendTip('event message', 'name', { value: amount });
+        await expect(tx).to.be.revertedWith("You don't have enough eth to send")
+    })
+
+    it('should react to the tip event', async function () {
+        const [, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+        const amount = ethers.utils.parseEther("55");
+        const tipContract = contract.connect(sender);
+        const tx = await tipContract.sendTip('event message', 'name', { value: amount });
+        await tx.wait()
+        expect(tx).to.emit(contract, 'NewTip').withArgs(sender.address, 'event message', 'name', amount);
 
     })
 

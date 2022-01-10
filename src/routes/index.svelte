@@ -1,6 +1,6 @@
 <script>
 	import { ethers, utils } from 'ethers';
-	import { formatEther } from 'ethers/lib/utils';
+	import { formatEther, parseUnits } from 'ethers/lib/utils';
 	import { onMount } from 'svelte';
 	import TipJarABI from '../artifacts/src/contracts/TipJar.sol/TipJar.json';
 
@@ -10,14 +10,23 @@
 	let network = null;
 	let balance = null;
 	let isConnected = false;
-	let contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'; //this can be an ENS
+	let contractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3'; //this can be an ENS
 	let contract = null;
 	let tipContract = null;
+	let allTips = [];
+	let sendingTip = false;
 
 	async function setupContract() {
 		if (isConnected && provider) {
 			contract = new ethers.Contract(contractAddress, TipJarABI.abi, provider);
 			tipContract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
+
+			contract.on('NewTip', async () => {
+				// update balance
+				balance = await provider.getBalance(userAddress);
+				// update the tips
+				await getTips();
+			});
 		}
 	}
 
@@ -34,6 +43,7 @@
 				balance = await provider.getBalance(userAddress);
 				isConnected = true;
 				setupContract();
+				getTips();
 				await addEthereumListeners();
 			} else {
 				alert('No ethereum accounts found');
@@ -58,15 +68,37 @@
 	}
 
 	async function sendTip(event) {
+		sendingTip = true;
 		const formData = new FormData(event.target);
 		const data = {};
 		for (let field of formData) {
 			const [key, value] = field;
 			data[key] = value;
 		}
-		const transaction = await tipContract.sendTip(data.message, data.name, { value: data.amount });
+
+		const transaction = await tipContract.sendTip(data.message, data.name, {
+			value: ethers.utils.parseEther(data.amount)
+		});
 		await transaction.wait();
-		alert('Tip Sent!');
+		sendingTip = false;
+	}
+
+	async function getTips() {
+		if (isConnected) {
+			const tips = await contract.getAllTips();
+
+			allTips = [
+				...tips.map((item) => {
+					return {
+						address: item.sender,
+						timestamp: new Date(item.timestamp * 1000).toLocaleDateString(),
+						message: item.message,
+						name: item.name,
+						amount: ethers.utils.formatEther(item.amount.toString())
+					};
+				})
+			];
+		}
 	}
 	// Let's avoid clicking connect every time and check if the wallet was already connected
 	onMount(async () => {
@@ -81,6 +113,7 @@
 				balance = await provider.getBalance(userAddress);
 				isConnected = true;
 				setupContract();
+				getTips();
 				await addEthereumListeners();
 			}
 		}
@@ -115,11 +148,44 @@
 			<input type="text" name="message" placeholder="Message" />
 		</div>
 		<button
+			disabled={sendingTip}
 			type="submit"
 			class="bg-green-500 text-gray-50 shadow-md rounded-md px-2 py-2 text-center w-1/3 self-center hover:bg-green-600"
-			>Send a tip!</button
+			>{#if sendingTip} Sending... {:else} Send a tip! {/if}</button
 		>
 	</form>
+	<table class="mt-8 border-collapse table-auto w-2/3 mx-auto text-sm h-80 overflow-auto">
+		<thead>
+			<tr>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>address</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>>ame</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Message</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Timestamp</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Amount</th
+				>
+			</tr>
+		</thead>
+		<tbody>
+			{#each allTips as item}
+				<tr>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.address}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.name}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.message}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.timestamp}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.amount} eth</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 {:else}
 	<button
 		on:click={connectWallet}
