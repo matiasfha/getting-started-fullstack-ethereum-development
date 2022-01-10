@@ -9,7 +9,8 @@
 	let network = null;
 	let balance = null;
 	let isConnected = false;
-	let contractAddress = '0xDc88da244C7C78eF98a5E7e05C77272585baa2Ae'; //this can be an ENS
+	let contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+	console.log(import.meta.env);
 	let contract = null;
 	let tipContract = null;
 	let allTips = [];

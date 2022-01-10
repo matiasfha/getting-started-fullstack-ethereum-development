@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require('dotenv').config();
-console.log(process.env.ALCHEMY_API_URL);
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
