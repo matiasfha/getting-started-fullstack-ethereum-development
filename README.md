@@ -1,130 +1,139 @@
-# 🎉 Welcome on board!
+# Lesson 01: Setup
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-## 🚌 Getting starting with Ethereum Development
+## Initial Setup
 
-- [Demo app can be found here](https://crypto-tip-jar-course-demo.vercel.app/)
+To start this project, you need to run through an small amount of setup steps to get everything ready to work.
 
-In this coures you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
+The stack for this project is based on
 
-Lastly, you'll learn how to deploy your dapp to the blockchain.
+- SvelteKit and TailwindCss for the UI
+- Hardhat: To create the ethereum development environment
 
-## 👨🏻‍💻 Course summary
+### SvelteKit
 
-Ok. Are you ready? Cool, this will be quite a journey but fun and full of challenges. A few this that you'll be able to learn.
+The first step will be to setup sveltekit, you'll use the folder structure of the sveltekit project to hold the entire application including the smart contract and related artifacts.
 
-- How to setup SvelteKit.
-- How write an smart contract with Solidity.
-- How to configure an Ethereum development environment.
-- How to test an smart contract using javascript.
-- How to connect a web application to a wallet.
-- How to interact with a deployed smart contract.
-- How to deploy an smart contract.
+To start you just need to open a terminal and run a couple of commands
 
-## 👨🏻‍💻Who Am I?
-
-👋 I [Matías Hernández](https://matiashernandez.dev), father, developer, podcaster, writer and instructor.
-
-I started my journey many years ago (even before jQuery became a thing), though this years I tried many different things but web developmet has always been my passion. During the last 10 years I officialy worked as "Softare Engineer" or "Developer" (the role name depends on the company 🤷‍♂️) for many different projects. During this years I collected ideas, concepts and knowledge that I try to share in different mediums to help other developers to level up their careers.
-
-I love what I do and I try to bring the same passion to the content creation trough courses at [egghead.io](https://matiasfha.dev/egghead), articles en [FreeCodeCamp](https://matiasfha.dev/fcces), [my blog](https://matiashernandez.dev), [Cloudinary](https://mediajams.dev/author/matias-hernandez) and other publicationss and also with my podcasts [Café con Tech](https://www.cafecon.tech/) & [Control Remoto](https://www.controlremoto.io/) and finally thorugh my [newsletter](https://microbytes.dev).
-
-Find me in twitter as [@matiasfha](https://twitter.com/matiasfha)
-
-## ⏰ Before the course
-
-The main requisits to start with ethereum development is an "intermediate" knowledege on javascript and web development in general, the idea is to bring you into this new and excinting world from scratch!
-
-### 🛠 Requirements
-
-This are the things you need to susccessfully go through this course
-
-#### Sytem Requirements
-
-- [git](https://git-scm.com/) v2.13 or above
-- [NodeJS](https://nodejs.org/) `12 || 14 || 15 || 16`
-- [npm](https://www.npmjs.com/) v6 or superior
-- Install [Metamask](https://metamask.io/) (this will also be done through the course )
-
-This tools need to be part of your system, you can check each version in the terminal
-
-```shell
-$ git --version
-$ node --version
-$ npm --version
+```bash
+npm init svelte@next tip-jar
 ```
 
-#### Configuration
+This script will work as a wizard, showing you a few questions to get started, so:
 
-> If you like, you can fork this repository so you can store your progress.
+1. Select an Skeleton projeect
+2. Will not use Typescript (unless you want, but the course will not showcase the use of TS)
+3. Add ESLint
+4. Add Prettier
 
-- [ ] Clonse the repository
+After that you just need to enter into the newly created folder and install the dependencies
 
-```shell
-git clone https://github.com/matiasfha/crypto-tip-jar-course-demo
-```
-
-- [ ] Install the dependencies
-
-```shell
-cd crypto-tip-jar-course-demo
+```bash
+cd tip-jar
 npm install
 ```
 
-> this can take a few minutes
+### TailwindCSS
 
-If you have any problem during this process, please [fille an issue](https://github.com/matiasfha/crypto-tip-jar-course-demo/issues/new).
+As mentioned before, this project will use Tailwind to give the UI a little touch, to configure tailwind inside your svelteKit project, you can use a simple script named
+[svelte-add](https://github.com/svelte-add/svelte-add)
 
-#### Execute the project
-
-The `main` branch hold the final project ready to be tested, if you want to run locally to check what you'll build you can do it by
-
-```shell
-npm run start
+```bash
+npx svelte-add@latest tailwindcss
+npm install
 ```
 
-This will:
+### Hardhat
 
-- spawn a local ethereum network
-- compile and locally deploy the smart contract
-- Run the contract tests
-- run the web application and open your browser
+[Hardhat](https://hardhat.org) is the development environment of choice for this course, it allows you to compile, deploy, test and debug your smart contract.
+It helps you to run a local Ethereum network allowing you to have test accounts and to locally run your solidity code.
 
-> Now you just need to import an account into metamask to test the application locally
-> This will be shown through the course
+Let's install the required packages.
 
-### ❓ How to run each lesson
+- Hardhat: The development environment
+- Chai: The assertion library for testing the contract
+- Ethers.js: A javascript library to interact with the Ethereum Blockchain
+- hardhat-waffle: A plugin to work with Waffle, a tool to test smart contracts
 
-Each video lesson have a companion code that you'll be able to find in a corresponding branch named as `lesson-XX`.
+```bash
+npm install ethers hardhat @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers
+```
 
-You can navigate through the branches to review the resulting code to follow the video lesson.
+## Configuration
 
-## 📝 About the course
+Now that you have all the dependencies ready to go, is time to do some configurations to be able to work.-
 
-### Lessons structure
+### Hardhat
 
-Each lesson will show you a little step towards the en goals. Also each lesson have it's own branch and it's own Readme file that will give you some resources and written content related with the video lesson.
+First, run the started for hardhat
 
-#### List of lessons
+```bash
+npx hardhat
+```
 
-- [01 - Initial Setup]()
-- [02 - Let's write the first smart contract](./leccion02/Readme.md)
-- [03 - Writing the first test for the smart contract](./leccion03/Readme.md)
-- [13 - Construyendo una interfaz](./leccion11/Readme.md)
+This will ask if you want an example project or an empty hardhat configuration, choose "Create an empty hardhat.config.js"
 
-## Contributors ✨
+After that, let's create some folders that you'll need
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+```bash
+mkdir scripts
+mkdri src/contracts
+mkdir test
+```
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+Now, let edit the hardhat configuration file to set the paths required
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
+```javascript
+require('@nomiclabs/hardhat-waffle'); // import the waffle plugin
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
+module.exports = {
+	solidity: '0.8.4', // The version of solidity
+	paths: {
+		artifacts: './src/artifacts', // Where the compilation artifacts will live
+		sources: './src/contracts' // Where the smart contract source code will found
+	},
+	networks: {
+		// define the networks where hardhat will deploy
+		hardhat: {
+			chainId: 1337 // To be able to work with metamask in localhost
+		}
+	}
+};
+```
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+### SvelteKit
+
+The svelteKit configuration will work out of the box, but if you want to deploy the web application to some place like Vercel, Cloudflare Workers, Netlify or similar you'll need [an adapter](https://kit.svelte.dev/docs#adapters)
+
+Let's install the Vercel adapter to later in the course, deploy the web application there.
+
+```bash
+npm install --save-dev @sveltejs/adapter-vercel@next
+```
+
+And update the `svelte.config.js` to include the new adapter
+
+```javascript
+import preprocess from 'svelte-preprocess';
+import adapter from '@sveltejs/adapter-vercel';
+
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
+	kit: {
+		adapter: adapter(),
+
+		// hydrate the <div id="svelte"> element in src/app.html
+		target: '#svelte'
+	},
+
+	preprocess: [preprocess({})]
+};
+
+export default config;
+```
