@@ -109,10 +109,7 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 
 #### List of lessons
 
-- [01 - Initial Setup]()
-- [02 - Let's write the first smart contract](./leccion02/Readme.md)
-- [03 - Writing the first test for the smart contract](./leccion03/Readme.md)
-- [13 - Construyendo una interfaz](./leccion11/Readme.md)
+- [01 - Initial Setup](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson01/README.md)
 
 ## Contributors ✨
 
