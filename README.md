@@ -110,6 +110,7 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 #### List of lessons
 
 - [01 - Initial Setup](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson01/README.md)
+- [02 - Smart Contracts](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson02/README.md)
 
 ## Contributors ✨
 
