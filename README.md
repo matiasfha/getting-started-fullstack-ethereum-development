@@ -1,139 +1,103 @@
-# Lesson 01: Setup
+# Lesson 02
+
+## Create your first smart contract
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-## Initial Setup
+The first step in this journey will be get your hands into a new language to harness the power of the blockchain. I'm talking about [Solidity](https://soliditylang.org/)
 
-To start this project, you need to run through an small amount of setup steps to get everything ready to work.
+> This isn't a Solidity focused course but we will review some
+> concepts to get you up to speed with it.
 
-The stack for this project is based on
+The first thing to notice is that Solidity is an statically-typed language created specifically to create smart contracts for the Ethereum network.
 
-- SvelteKit and TailwindCss for the UI
-- Hardhat: To create the ethereum development environment
+An smart contract is like "real life" contract. Is a way to establish terms for an agreement. But the "smart" part it's because this type of contract is declared as machine code that is executed in a blockchain. This expand the idea of the original blockchain, Bitcon, aout sending and receiveing money without a centralized intermiediary to create trust and make possible to automate and dcentralize virtually any kinf of deal or transaction.
 
-### SvelteKit
+Since the contracts run in the blockchain (like Ethereum network) they offer high security, trust, inmmutability and reliability.
 
-The first step will be to setup sveltekit, you'll use the folder structure of the sveltekit project to hold the entire application including the smart contract and related artifacts.
+> Since the blockchain is immutable you have to be care on what are you deploying. After deployed it cannot be change and you'll need to deploy a new contract.
 
-To start you just need to open a terminal and run a couple of commands
+For Solidity, a contract is a collection of code (a program) and data (the state) that lives inside the blockchain, it can be identify by its Ethereum address. You can leverage your previous knowledge and use some analogies to understand the smart contract.
 
-```bash
-npm init svelte@next tip-jar
-```
+You can think on the contract as your "backend" or "server side" program. This server expose an API and store some data (the state) into the a databse (the blockchain), but the database is not written nor query with a different language like SQL, you can imagine that Solidity is automatically connected to the database and everything you deeclare (like a variable) is stored in the database.
 
-This script will work as a wizard, showing you a few questions to get started, so:
+Let's see an siomple example
 
-1. Select an Skeleton projeect
-2. Will not use Typescript (unless you want, but the course will not showcase the use of TS)
-3. Add ESLint
-4. Add Prettier
-
-After that you just need to enter into the newly created folder and install the dependencies
-
-```bash
-cd tip-jar
-npm install
-```
-
-### TailwindCSS
-
-As mentioned before, this project will use Tailwind to give the UI a little touch, to configure tailwind inside your svelteKit project, you can use a simple script named
-[svelte-add](https://github.com/svelte-add/svelte-add)
-
-```bash
-npx svelte-add@latest tailwindcss
-npm install
-```
-
-### Hardhat
-
-[Hardhat](https://hardhat.org) is the development environment of choice for this course, it allows you to compile, deploy, test and debug your smart contract.
-It helps you to run a local Ethereum network allowing you to have test accounts and to locally run your solidity code.
-
-Let's install the required packages.
-
-- Hardhat: The development environment
-- Chai: The assertion library for testing the contract
-- Ethers.js: A javascript library to interact with the Ethereum Blockchain
-- hardhat-waffle: A plugin to work with Waffle, a tool to test smart contracts
-
-```bash
-npm install ethers hardhat @nomiclabs/hardhat-waffle ethereum-waffle chai @nomiclabs/hardhat-ethers
-```
-
-## Configuration
-
-Now that you have all the dependencies ready to go, is time to do some configurations to be able to work.-
-
-### Hardhat
-
-First, run the started for hardhat
-
-```bash
-npx hardhat
-```
-
-This will ask if you want an example project or an empty hardhat configuration, choose "Create an empty hardhat.config.js"
-
-After that, let's create some folders that you'll need
-
-```bash
-mkdir scripts
-mkdri src/contracts
-mkdir test
-```
-
-Now, let edit the hardhat configuration file to set the paths required
+- Create a file under `src/contracts/TipJar.sol`
+- Write the following
 
 ```javascript
-require('@nomiclabs/hardhat-waffle'); // import the waffle plugin
+// SPDX-License-Identifier: GPL-3.0
 
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
-module.exports = {
-	solidity: '0.8.4', // The version of solidity
-	paths: {
-		artifacts: './src/artifacts', // Where the compilation artifacts will live
-		sources: './src/contracts' // Where the smart contract source code will found
-	},
-	networks: {
-		// define the networks where hardhat will deploy
-		hardhat: {
-			chainId: 1337 // To be able to work with metamask in localhost
-		}
-	}
-};
+pragma solidity ^0.8.4; //same as hardhat.config.js
+
+import 'hardhat/console.sol'; // This allow you to use console.log
+
+contract TipJar {
+	uint256 public totalTips; // an integer public variable
+}
+
 ```
 
-### SvelteKit
+The first line tells you about the license for this source code, and is required for your Solidy code.
+The next line declares that this code was written for Solidty version `0.8.4` or newer. This pragma lines are common instructions for compilers to let them know how to treat the source code.
 
-The svelteKit configuration will work out of the box, but if you want to deploy the web application to some place like Vercel, Cloudflare Workers, Netlify or similar you'll need [an adapter](https://kit.svelte.dev/docs#adapters)
+Third line import an utility from `hardhat` package that let you use `console.log` to print data to the standard output.
 
-Let's install the Vercel adapter to later in the course, deploy the web application there.
+And finally the contract start. Very similar to a javascript class, the contract code lives under a `contract` block.
 
-```bash
-npm install --save-dev @sveltejs/adapter-vercel@next
-```
+## Testing
 
-And update the `svelte.config.js` to include the new adapter
+Since after you deploy something to the blockchain, it cannot be change you need to be sure that what your are deploying is actually what you want, for that, writting tests is the main path to get confidence on your code.
+
+Writing tests for smart contracts written under the hardhat development environment is done using Javascript (or Typescript) by leveraging the power of `Waffle`.
+
+`Waffle` is al library to write and test smart contracts that directly works with `ethers.js` and Chai matchers.
+
+First step is to add the `Waffle` plugin to your hardhat environment, edit the `hardhat.config.cjs`
 
 ```javascript
-import preprocess from 'svelte-preprocess';
-import adapter from '@sveltejs/adapter-vercel';
-
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	kit: {
-		adapter: adapter(),
-
-		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte'
-	},
-
-	preprocess: [preprocess({})]
-};
-
-export default config;
+require('@nomiclabs/hardhat-waffle');
 ```
+
+Now, to write the first test, create a file under `test/TipJar.js` and an empty `package.json` file. This `package.json` file is to let the tests play nice with the commonJS and ESModule configuration of the project.
+
+Now, let's create the first test
+
+```javascript
+const { expect } = require('chai');
+const { ethers } = require('hardhat');
+
+describe('TipJar', function () {
+	let contract;
+
+	it('Should deploy the contract and return 0 as totalTips', async function () {
+		const contractFactory = await ethers.getContractFactory('TipJar');
+		contract = await contractFactory.deploy();
+		await contract.deployed();
+		expect(await contract.totalTips()).to.equal(0);
+	});
+});
+```
+
+But also configure hardhat to play along with esmodules, for that let's rename `hardhatconfig.js` to `hardhat.config.cjs` and setup some npm scripts
+
+add this to your package.json file
+
+```javascript
+"hardhat": "hardhat --config hardhat.config.cjs",
+"hardhat:compile": "npm run hardhat compile",
+"hardhat:run": "npm run hardhat run scripts/run.js",
+"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
+"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js --network rinkeby",
+"hardhat:test": "npm run hardhat test"
+```
+
+We still don't have the run and deploy scripts but we will add them soon.
+
+Let's run the test
+
+`npm run hardhat:test`
+
+The test will use hardhat to compile and mimic the deploy process
