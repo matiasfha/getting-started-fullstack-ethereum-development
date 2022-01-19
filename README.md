@@ -1,6 +1,6 @@
 # Lesson 03
 
-## Let's create the sendd tip action
+## Solidity Variables
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
