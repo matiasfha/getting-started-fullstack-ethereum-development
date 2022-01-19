@@ -112,6 +112,8 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 - [01 - Initial Setup](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson01/README.md)
 - [02 - Smart Contracts](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson02/README.md)
 - [03 - Solidity Variables](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson03/README.md)
+- [04 - Transfer Money](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson04/README.md)
+- [03 - Testing the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson05/README.md)
 
 ## Contributors ✨
 
