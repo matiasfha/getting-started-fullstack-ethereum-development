@@ -28,4 +28,30 @@ contract TipJar {
 	constructor() {
 		owner = payable(msg.sender); // set the contract createor based in who instantitiated it
 	}
+
+	// Functions
+
+	/*
+	 * public funtion (like a getter) that returns the total number of tips
+	 * is marked as public and as a view, meaning that only reads from the blockchain so is gas free
+	 * In a function you should declare what it returns
+	 */
+	function getTotalTips() public view returns (uint256) {
+		return totalTips;
+	}
+
+	function sendTip(string memory _message, string memory _name) public payable {
+		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
+		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
+		totalTips += 1; //increase the amount of tips
+		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
+	}
+
+	/*
+	 * a function that give access to the stored tips struct
+	 * is just read from the blockchain so is marked as view
+	 */
+	function getAllTips() public view returns (Tip[] memory) {
+		return tips;
+	}
 }

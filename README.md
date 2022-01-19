@@ -1,17 +1,20 @@
-# Lesson 03
+# Lesson 04
 
-## Solidity Variables
+## Create function and send a tip
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Now, we have the base contract to work on. The goal of the contract is to act as a tip jar, a way to allow users or followers to send you some ETH through the web, including some message. But also, to showcase the people that sent you that money by making the actions public in the web too. This means that the contract need to:
+Is time to get your hands dirty and start creating some functions to make this contract usable.
+As in every other programming language, in Solidity a function is a group of reusable code that can be called anywhere in the program.
 
-1. Identiyfy to who to send the tip
-2. Store the tip sender data including the message, and the amount of eth.
-3. Allow a way to retrieve the actions (the tips sent) made through it.
+To define a function Solidity use the keyword `function` follwed by a unique name, a list of parameters and the curly braces that will sorround the body of the function.
 
-Let's jump to the code, open the contract file under `src/contracts/TipJar.sol` and let's add a few variables first.
+The parameters of the function are declared including the type of the variable received.
+
+A function can have an optional `return` statement. Something required if you want to return some value of the computation made. In Solidity you needd to declare what value (or values) is return from the function by using the `returns ()` keyword in the function "header"2.
+
+Let's see some code
 
 ```javascript
 // SPDX-License-Identifier: GPL-3.0
@@ -44,54 +47,164 @@ contract TipJar {
     constructor() {
         owner = payable(msg.sender); // set the contract createor based in who instantitiated it
     }
+
+	// Functions
+
+	/*
+	 * public funtion (like a getter) that returns the total number of tips
+	 * is marked as public and as a view, meaning that only reads from the blockchain so is gas free
+	 * In a function you should declare what it returns
+	 */
+	function getTotalTips() public view returns (uint256) {
+		return totalTips;
+	}
+
+	function sendTip(string memory _message, string memory _name) public payable {
+		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
+		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
+		totalTips += 1; //increase the amount of tips
+		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
+	}
+
+	/*
+	 * a function that give access to the stored tips struct
+	 * is just read from the blockchain so is marked as view
+	 */
+	function getAllTips() public view returns (Tip[] memory) {
+		return tips;
+	}
 }
 
 ```
 
-### Addresses
+Here 3 functions were added, let's review them.
 
-The Ethereum blockchain is made up of accounts - you can think of it as bank accounts - An account has a balance of ETH and you can send and receive ETH on that accounts. Each ETH account is identify by an `address`, an unique identifier.
+### getTotalTips
 
-In this case, the contract will store an `address` identify by the name of `owner` so you can identify who the owner of the contract is.
+This is a very simple function but that use some neat solidity features.
+First thing to notice is that it use a visibility modifier. A function (or a variable) can be `public`, `private`,`external` or `internal`.
 
-### Payable
+The `public` keyword indicates that the function meaning that can be accessible from outside of the contract, like the public facing API.
 
-`payable` is a modiifer, a way to identify an address (or a function) that can receive Ether.
-So, if you want to enable and account to receive some Eth, the account need to be payable, this difference only exists in the solidity type system, it helps you (as the smart contract programmer) to think about whjeter an address should ever receive ETH from the smart contract.
+> If you mark a variable as `public` Solidity will create a getter for it to allow other contracts or the javascript client to read the value of it without required a function. In this case if `totalTips` is `public` then, there will be a method named `totalTips()` that will return its value.
 
-### Struct
+> You need to make state variables public if you want other contracts to read them.
+> You should make state variables and functions public if you want to be able to read/use them from Javascript client (or other language).
 
-As in any program language, with Solidity you can model complex data types, for that purpose the `struct` keyword is provided.
+The `private` keyword is to mark a function or variable as only accsible by the same contract.
 
-An struct allow you to create complicated data types that have multiple properties, in this case you just model the `Tip` struct. You can think on it as an analogy of a Javascript object that hold many properties.
+The `internal` (this is the default modifier) are accesible to the declaring contract an any contracts derived from it.
 
-1. The address of the `sender` of the tip.
-2. A message
-3. A name
-4. The timestamp of when the tip was sent
-5. The amount of ETh sent by the `sender`.
+The `external` defines a function that can be called from other contracts but cannot be called internally).
 
-### Arrays
+Check more about Visibility and Getters [in the Solidity Documentation](https://docs.soliditylang.org/en/develop/contracts.html#visibility-and-getters)
 
-Finally, an staple data structure in any language, the Array.
-When you want a collection of "something" you can use an `array`.
-Solidity offers two types of arrays:
+The other keyword found in this declaration is `view`.
+View functions ensure that they will not modify the state meaning is not:
 
-- Fixed: Have a fixed size defined upon declaration fo the variable.
-- Dynamics: Can store `N` number of elements since it have no fixed size.
+- Modifiying state variables.
+- Emitting events.
+- Creating other contracts.
+- Using selfdestruct.
+- Sentind Ether.
+- Calling any function that is not marked as `view` or `pure`.
+- Using low-level calls.
 
-In this case you created a dynamic array of the Tip struct.
+Getter methods (the ones automatically created by making a public variable) are `view` function by default.
 
-> All of this variables declared in this step are known as state variables.
-> Remember that the state variables are stored permanently in the blockchain, so a dynamic array of strructs is useful
-> to store structured data of the contract, kind of a database.
+So in general a `view` function is a read-only function this also means that there are no transactions (since there are no changes in the blockchain) so there are no gas fee by performing this type of functions.
 
-In a similar way to other programming languages, a Solidity array have some methods that allow you to manipulate it like adding or removing data from it.
+Finally there is the `returns` keyword that define that this function will return a value of type `uint256`
 
-### Constructor
+This function all it does is returning the value of the state variable `totalTips`
 
-Finally the contract have a constructor, in a similar way as a class in other programming languages. When the contract is instantiated the contructor is first call.
+### getAllTips
 
-This is an optional function, that can receive arguments.
+This function works in a similar way as the `getTotalTips`, is a `public view` function but this returns an array of `Tip` struct, this way the client of the contract can get the list of `tips` stored in the blockchain.
 
-In this case the constructor just define the value of the `owner` (private) variable, setting it to be the address of who instantiated the contract.
+It also use another keyword, `memory`. You can think on this as analogoues to a computer hard drive (`storage` keyword) and computers RAM (`memory`). Memory is a temporary place to store some data between function calls.
+
+Eveery transaction on the blockchain cost some Gass. The lower the gas consumption of the code the better. The gas consumption of `memory` is insignificat in comparison to its counterpart. The `memory` variable will exists only while the function is being called.
+
+### sendTip
+
+This is the core of the contract, the function that perform the transaction between the sender and you - the owner - .
+
+This function accepts 2 arguments, the message and the name, both strings (this use a common practice of naming arguments with an underscore prefix). Is also `public payable` function.
+
+Inside of it you'll found new things too, first this line
+
+```javascript
+(bool success, ) = owner.call{ value: msg.value}('')
+```
+
+First, at the left side you'll found a destructuring assignment, works in the same way as in javascript.
+Solidity the use of tuples, a list of objects of potentially different types, this are used to be able to return multiple values at the same time.
+
+> Be aware the tuples are not a propert type, they can only be used to form groupings of expressions
+
+You can assign the return value of a function to a variable, in this case the function returns a tuple where the first element of it is a boolean so you can assign that to the tuple where the first element will be named `success`.
+
+#### Give me the money!
+
+Then, at the righ side there is a function call in this case is calling the `call` method on the `owner` address.
+
+But first, let's check the different ways to send ETH to some address.
+
+1. `address.send(amount)` This method can be used to send `amount` of ETH to `address` but have some considerations
+
+- The unsuccessful execution of `send()` returns `false` but do not throw an exception. So you need to pay attention when to use this (like using some constraints to check the operation) because even an unsuccessful operation will spend some gas.
+
+- It have a gas limit of 2300 units.
+
+2. `address.transfer(amount)` Is a newer method to send `amount` of ETH to `address`. Things to consider:
+
+- Same limit of gas as before 2300 units, but there is a `gas` modifier that allow you to define the gas limit of the operation.
+- If the operation fails, an exception will be throw allowing the wallet to notify about it.
+- It required that the receiving contract to implement a `fallback` function.
+
+3. `address.call{value: amount}()`: This is the most customizable way of sending `amount` to `address`. This is the recommended way after December 2019. It will forward all gas or set gas.
+   This method is the recommended way to avoid Re-entrancy attacks, if you want to know more about it check [this article by OpenZeppeling](https://blog.openzeppelin.com/reentrancy-after-istanbul/)
+
+This function call will read the value of `msg.value`. The empty argument `('')` if the way to trigger the fallback function of the receiving address.
+
+Solidity offers a serie of global variables that are available to be used by any function. Some of that are `msg.value` and `msg.sender`.
+
+`msg.sender` makes reference to the address of the caller of the function
+`msg.value` It contains the amount of `wei` (eth / 1e18) sent in the transaction. This means that `msg.value` will store the amount of ether sent with that `payable` function. (this amount will be set by the javascript client that will call the `sendTip` function)
+
+> Similar to how one dollar is equal to 100 cents
+> one ETH is equal to 10^18 wei
+> wei is the smallest uint of ether.
+> In Solidity you can directly use some units like wei and ether
+> uint public oneWei = 1 wei;
+> bool isOneWei = 1 wei == 1;
+> uint oneEther = 1 ether;
+> bool isOneEther = 1 ethere == 1e18;
+
+Other memebers of the `msg` object are
+
+```javascript
+	msg.data (bytes): complete calldata
+	msg.gas (uint): remaining gas - deprecated in version 0.4.21 and to be replaced by gasleft()
+	msg.sig (bytes4): first four bytes of the calldata (i.e. function identifier)
+```
+
+#### require
+
+Next in the code is a call to `require` method. This is part of a set of function designed to rever state changes to prevent possible issues.
+
+`require` accepts two arguments: a condition and a message if the condition fails. By using it you let Solidity to deal with the errors by reverting the state modifications and throwing exceptions.
+This function guarantees validity of the conditions. It can be used to check inpuits, contract state variables and return values from other calls.
+
+In this case you'll use `require` to check the status value of the previous `call` function. Is `success` is false the transaction will fail and all the state will be reverted (and no gas will be spent by the user.).
+
+#### Update the tips array
+
+After the transfer of money is susccess you need to update the `totalTips` variable to reflect the correct number and lastly update the `tips` array by creating a new struct with the correct data
+
+`Tip(msg.sender, _message, _name, block.timestamp, msg.value)`
+
+This piece of code will create a new `Tip` struct with the address of `msg.sender`, the `_message` and `_name` passed as argumentos to the function, the `block.timestamp` to get the timestamp of the current block in seconds since epoch and finally the amount of `eth` sent by the user that resides in `msg.value`.
+
+And Voila!, You just send money to the owner of the contract.
