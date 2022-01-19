@@ -85,3 +85,13 @@ In this case you created a dynamic array of the Tip struct.
 > All of this variables declared in this step are known as state variables.
 > Remember that the state variables are stored permanently in the blockchain, so a dynamic array of strructs is useful
 > to store structured data of the contract, kind of a database.
+
+In a similar way to other programming languages, a Solidity array have some methods that allow you to manipulate it like adding or removing data from it.
+
+### Constructor
+
+Finally the contract have a constructor, in a similar way as a class in other programming languages. When the contract is instantiated the contructor is first call.
+
+This is an optional function, that can receive arguments.
+
+In this case the constructor just define the value of the `owner` (private) variable, setting it to be the address of who instantiated the contract.
