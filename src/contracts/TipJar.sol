@@ -41,8 +41,9 @@ contract TipJar {
 	}
 
 	function sendTip(string memory _message, string memory _name) public payable {
+		require(msg.sender.balance >= msg.value, "You don't have enough funds"); // require that the sender has enough ether to send
 		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
-		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
+		require(success, 'Transfer failed'); // Check that the transfer was successful, if not trigger an error message
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 	}

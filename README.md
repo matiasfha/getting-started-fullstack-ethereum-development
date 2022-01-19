@@ -60,8 +60,9 @@ contract TipJar {
 	}
 
 	function sendTip(string memory _message, string memory _name) public payable {
+		require(msg.sender.balance >= msg.value, "Youd don't have enough funds"); // require that the sender has enough ether to send
 		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
-		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
+		require(success, 'Transfer failed'); // Check that the transfer was successful, if not trigger an error message
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 	}
@@ -135,6 +136,36 @@ This function accepts 2 arguments, the message and the name, both strings (this 
 Inside of it you'll found new things too, first this line
 
 ```javascript
+require(msg.sender.balance >= msg.vale, "You don't have enough funds");
+```
+
+Solidity offers a serie of global variables that are available to be used by any function. Some of that are `msg.value` and `msg.sender`.
+
+`msg.sender` makes reference to the address of the caller of the function
+`msg.value` It contains the amount of `wei` (eth / 1e18) sent in the transaction. This means that `msg.value` will store the amount of ether sent with that `payable` function. (this amount will be set by the javascript client that will call the `sendTip` function)
+
+Other memebers of the `msg` object are
+
+```javascript
+	msg.data (bytes): complete calldata
+	msg.gas (uint): remaining gas - deprecated in version 0.4.21 and to be replaced by gasleft()
+	msg.sig (bytes4): first four bytes of the calldata (i.e. function identifier)
+```
+
+#### require
+
+This is a call to `require` method. This is part of a set of function designed to rever state changes to prevent possible issues.
+
+`require` accepts two arguments: a condition and a message if the condition fails. By using it you let Solidity to deal with the errors by reverting the state modifications and throwing exceptions.
+This function guarantees validity of the conditions. It can be used to check inpuits, contract state variables and return values from other calls.
+
+In this case you'll use `require` to check if the value that the sender want to sent is lower that the balance of the sender account.
+
+#### Give me the money!
+
+Next in the code you'll see the following statement.
+
+```javascript
 (bool success, ) = owner.call{ value: msg.value}('')
 ```
 
@@ -144,8 +175,6 @@ Solidity the use of tuples, a list of objects of potentially different types, th
 > Be aware the tuples are not a propert type, they can only be used to form groupings of expressions
 
 You can assign the return value of a function to a variable, in this case the function returns a tuple where the first element of it is a boolean so you can assign that to the tuple where the first element will be named `success`.
-
-#### Give me the money!
 
 Then, at the righ side there is a function call in this case is calling the `call` method on the `owner` address.
 
@@ -168,11 +197,6 @@ But first, let's check the different ways to send ETH to some address.
 
 This function call will read the value of `msg.value`. The empty argument `('')` if the way to trigger the fallback function of the receiving address.
 
-Solidity offers a serie of global variables that are available to be used by any function. Some of that are `msg.value` and `msg.sender`.
-
-`msg.sender` makes reference to the address of the caller of the function
-`msg.value` It contains the amount of `wei` (eth / 1e18) sent in the transaction. This means that `msg.value` will store the amount of ether sent with that `payable` function. (this amount will be set by the javascript client that will call the `sendTip` function)
-
 > Similar to how one dollar is equal to 100 cents
 > one ETH is equal to 10^18 wei
 > wei is the smallest uint of ether.
@@ -181,23 +205,6 @@ Solidity offers a serie of global variables that are available to be used by any
 > bool isOneWei = 1 wei == 1;
 > uint oneEther = 1 ether;
 > bool isOneEther = 1 ethere == 1e18;
-
-Other memebers of the `msg` object are
-
-```javascript
-	msg.data (bytes): complete calldata
-	msg.gas (uint): remaining gas - deprecated in version 0.4.21 and to be replaced by gasleft()
-	msg.sig (bytes4): first four bytes of the calldata (i.e. function identifier)
-```
-
-#### require
-
-Next in the code is a call to `require` method. This is part of a set of function designed to rever state changes to prevent possible issues.
-
-`require` accepts two arguments: a condition and a message if the condition fails. By using it you let Solidity to deal with the errors by reverting the state modifications and throwing exceptions.
-This function guarantees validity of the conditions. It can be used to check inpuits, contract state variables and return values from other calls.
-
-In this case you'll use `require` to check the status value of the previous `call` function. Is `success` is false the transaction will fail and all the state will be reverted (and no gas will be spent by the user.).
 
 #### Update the tips array
 
