@@ -1,31 +1,17 @@
-# Lesson 02
+# Lesson 03
 
-## Create your first smart contract
+## Let's create the sendd tip action
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-The first step in this journey will be get your hands into a new language to harness the power of the blockchain. I'm talking about [Solidity](https://soliditylang.org/)
+Now, we have the base contract to work on. The goal of the contract is to act as a tip jar, a way to allow users or followers to send you some ETH through the web, including some message. But also, to showcase the people that sent you that money by making the actions public in the web too. This means that the contract need to:
 
-> This isn't a Solidity focused course but we will review some
-> concepts to get you up to speed with it.
+1. Identiyfy to who to send the tip
+2. Store the tip sender data including the message, and the amount of eth.
+3. Allow a way to retrieve the actions (the tips sent) made through it.
 
-The first thing to notice is that Solidity is an statically-typed language created specifically to create smart contracts for the Ethereum network.
-
-An smart contract is like "real life" contract. Is a way to establish terms for an agreement. But the "smart" part it's because this type of contract is declared as machine code that is executed in a blockchain. This expand the idea of the original blockchain, Bitcon, aout sending and receiveing money without a centralized intermiediary to create trust and make possible to automate and dcentralize virtually any kinf of deal or transaction.
-
-Since the contracts run in the blockchain (like Ethereum network) they offer high security, trust, inmmutability and reliability.
-
-> Since the blockchain is immutable you have to be care on what are you deploying. After deployed it cannot be change and you'll need to deploy a new contract.
-
-For Solidity, a contract is a collection of code (a program) and data (the state) that lives inside the blockchain, it can be identify by its Ethereum address. You can leverage your previous knowledge and use some analogies to understand the smart contract.
-
-You can think on the contract as your "backend" or "server side" program. This server expose an API and store some data (the state) into the a databse (the blockchain), but the database is not written nor query with a different language like SQL, you can imagine that Solidity is automatically connected to the database and everything you deeclare (like a variable) is stored in the database.
-
-Let's see an siomple example
-
-- Create a file under `src/contracts/TipJar.sol`
-- Write the following
+Let's jump to the code, open the contract file under `src/contracts/TipJar.sol` and let's add a few variables first.
 
 ```javascript
 // SPDX-License-Identifier: GPL-3.0
@@ -35,69 +21,67 @@ pragma solidity ^0.8.4; //same as hardhat.config.js
 import 'hardhat/console.sol'; // This allow you to use console.log
 
 contract TipJar {
-	uint256 public totalTips; // an integer public variable
+	uint256 public totalTips; // This will hold/store the number of tips received
+
+    address payable owner; // identify the owner (the address) of the contract
+
+    /*
+	 * Store the "Tip" data in a structure
+	 * the struct allow you to create a custom datatype
+	 */
+	struct Tip {
+		address sender; //The person who gives you the tip
+		string message; //A message from the sender;
+		string name; //THe name of the sender
+		uint256 timestamp; //When the tip was sent
+		uint256 amount; //the amount of ether sent to you
+	}
+	/*
+    store an array of structs to hold all the tips sent
+    */
+	Tip[] tips;
+
+    constructor() {
+        owner = payable(msg.sender); // set the contract createor based in who instantitiated it
+    }
 }
 
 ```
 
-The first line tells you about the license for this source code, and is required for your Solidy code.
-The next line declares that this code was written for Solidty version `0.8.4` or newer. This pragma lines are common instructions for compilers to let them know how to treat the source code.
+### Addresses
 
-Third line import an utility from `hardhat` package that let you use `console.log` to print data to the standard output.
+The Ethereum blockchain is made up of accounts - you can think of it as bank accounts - An account has a balance of ETH and you can send and receive ETH on that accounts. Each ETH account is identify by an `address`, an unique identifier.
 
-And finally the contract start. Very similar to a javascript class, the contract code lives under a `contract` block.
+In this case, the contract will store an `address` identify by the name of `owner` so you can identify who the owner of the contract is.
 
-## Testing
+### Payable
 
-Since after you deploy something to the blockchain, it cannot be change you need to be sure that what your are deploying is actually what you want, for that, writting tests is the main path to get confidence on your code.
+`payable` is a modiifer, a way to identify an address (or a function) that can receive Ether.
+So, if you want to enable and account to receive some Eth, the account need to be payable, this difference only exists in the solidity type system, it helps you (as the smart contract programmer) to think about whjeter an address should ever receive ETH from the smart contract.
 
-Writing tests for smart contracts written under the hardhat development environment is done using Javascript (or Typescript) by leveraging the power of `Waffle`.
+### Struct
 
-`Waffle` is al library to write and test smart contracts that directly works with `ethers.js` and Chai matchers.
+As in any program language, with Solidity you can model complex data types, for that purpose the `struct` keyword is provided.
 
-First step is to add the `Waffle` plugin to your hardhat environment, edit the `hardhat.config.cjs`
+An struct allow you to create complicated data types that have multiple properties, in this case you just model the `Tip` struct. You can think on it as an analogy of a Javascript object that hold many properties.
 
-```javascript
-require('@nomiclabs/hardhat-waffle');
-```
+1. The address of the `sender` of the tip.
+2. A message
+3. A name
+4. The timestamp of when the tip was sent
+5. The amount of ETh sent by the `sender`.
 
-Now, to write the first test, create a file under `test/TipJar.js` and an empty `package.json` file. This `package.json` file is to let the tests play nice with the commonJS and ESModule configuration of the project.
+### Arrays
 
-Now, let's create the first test
+Finally, an staple data structure in any language, the Array.
+When you want a collection of "something" you can use an `array`.
+Solidity offers two types of arrays:
 
-```javascript
-const { expect } = require('chai');
-const { ethers } = require('hardhat');
+- Fixed: Have a fixed size defined upon declaration fo the variable.
+- Dynamics: Can store `N` number of elements since it have no fixed size.
 
-describe('TipJar', function () {
-	let contract;
+In this case you created a dynamic array of the Tip struct.
 
-	it('Should deploy the contract and return 0 as totalTips', async function () {
-		const contractFactory = await ethers.getContractFactory('TipJar');
-		contract = await contractFactory.deploy();
-		await contract.deployed();
-		expect(await contract.totalTips()).to.equal(0);
-	});
-});
-```
-
-But also configure hardhat to play along with esmodules, for that let's rename `hardhatconfig.js` to `hardhat.config.cjs` and setup some npm scripts
-
-add this to your package.json file
-
-```javascript
-"hardhat": "hardhat --config hardhat.config.cjs",
-"hardhat:compile": "npm run hardhat compile",
-"hardhat:run": "npm run hardhat run scripts/run.js",
-"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
-"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js --network rinkeby",
-"hardhat:test": "npm run hardhat test"
-```
-
-We still don't have the run and deploy scripts but we will add them soon.
-
-Let's run the test
-
-`npm run hardhat:test`
-
-The test will use hardhat to compile and mimic the deploy process
+> All of this variables declared in this step are known as state variables.
+> Remember that the state variables are stored permanently in the blockchain, so a dynamic array of strructs is useful
+> to store structured data of the contract, kind of a database.
