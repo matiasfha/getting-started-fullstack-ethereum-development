@@ -7,3 +7,5 @@ node_modules
 .env.*
 !.env.example
 cache
+src/artifacts/build-info
+src/artifacts/*
