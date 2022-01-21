@@ -84,6 +84,7 @@ describe('TipJar', function () {
 		const amount = ethers.utils.parseEther('9999');
 		// Perform another transaction
 		const tx = contract.connect(sender).sendTip('event message', 'name', { value: amount });
+		// Check that the transaction was reverted.
 		await expect(tx).to.be.reverted;
 	});
 });
@@ -97,4 +98,4 @@ Run in the terminal
 $ npm run hardhat:test
 ```
 
-and see the results
+and see the results. Now you have confidence that the smart contract works as expeected. Is time to deploy this to a local network and work in the client application.
