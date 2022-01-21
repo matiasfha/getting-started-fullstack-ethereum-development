@@ -1,101 +1,94 @@
-# Lesson 05
+# Lesson 06
 
-## Let's test the smart contract
+## Deployinhg to local Ethereum network
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Tests are important, as always but it may be more important when you are developing an smart contract. Why?
-Because the blockchain is immutable.
+Now you need a way to keep a local network alive, deploy the smart contract there and then interact with it. You can think on this like a local web server. When you develop an API you have a local server running it so the client application can talk to it so you can develop and test, this is the same idea.
 
-The main difference between Solidity development and other languages or environment is that after the implementation of an smart contract in the Ethereum network the contract is immutable, meaning that it will never be modified or updated again.
-
-The first code that get's deployed is the one that will remains unchanged for the rest of time. This is because one the main concerns of Solidity is security. If there's a flaw in your contract code, there is no way to patch it later. You would have to tell to the users of the contract to use a different contract (identified by an `address`) to get the fix.
-
-Sounds uncomfortable right? But, believe it or not, this is a **feature**. The code that your wrote it becomes a **law**. IF you read the code of an smart contract (and verified that that code is actually the one deployed) you can be sure that every time you call a function it will behave exactly as the code says it.
-
-So you need to be sure before deploy and the best way to get that confidence is by testing.
-
-[Hardhat](https://hardhat.org/) (the development environment of choice for this course) offers the tools to test the smart contract using Javascript or Typescript by leveraging the power of [Ethers.js](https://docs.ethers.io/) to interact with the Ethereum network and [Waffle](https://getwaffle.io/), a testing library built on top of Ethere.js
-
-You already dip your toes on a bit of testing code, now let's add a more robust test to check that the contract behaves as expected.
-
-```javascript
-const { expect } = require('chai'); // Require the assertion library
-const { providers } = require('ethers');
-const { ethers } = require('hardhat');
-
-describe('TipJar', function () {
-	//describe the main test
-	let contract;
-	this.beforeAll(async () => {
-		// Deploy the contract once for every test case
-		const contractFactory = await ethers.getContractFactory('TipJar'); //Create an abstraction of the contract used to deploy the TipJar
-		contract = await contractFactory.deploy(); // Start the deployment process, resolves to a Contract object
-		await contract.deployed();
-	});
-	it('Should deploy the contract and return 0 as totalTips', async function () {
-		expect(await contract.getTotalTips()).to.equal(0); // Retrieve the total number of tips
-	});
-
-	it('Should allow to send a tip and increase the number of total tips', async function () {
-		const [owner, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender
-		const balance = await owner.getBalance(); // Get the account balance of the owner
-		const senderBalance = await sender.getBalance();
-		/*
-		 * perform the send transaction
-		 * You pass the message and the name as arguments and the value as an object that is then
-		 * used as the global `msg` object in the contract
-		 * to define the amount of ETH use the parseEther utility
-		 */
-		const tx = await contract
-			.connect(sender)
-			.sendTip('message', 'name', { value: ethers.utils.parseEther('0.001') });
-		await tx.wait();
-
-		const newBalance = await owner.getBalance(); // Get the new balance of the owner account
-		const newSenderBalance = await sender.getBalance();
-
-		expect(newBalance).to.be.above(balance); // Check that the new balance if greater than before
-		expect(newSenderBalance).to.be.below(senderBalance);
-		expect(await contract.getTotalTips()).to.equal(1); // Get the total number of tips
-	});
-
-	it('should return all the tips', async function () {
-		const amount = ethers.utils.parseEther('0.002');
-
-		const [, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender
-		// Perform another transaction
-		const tx = await contract.connect(sender).sendTip('2nd message', '2nd name', { value: amount });
-		await tx.wait();
-		const tips = await contract.getAllTips();
-		// Since this test ran in the same contract instance as before the total number of tips should be 2
-		expect(await contract.getTotalTips()).to.equal(2);
-		// The lenght of the tips arrray should be 2 too
-		expect(tips.length).to.equal(2);
-		// The second element of the tips array should be the same as the transaction sent
-		expect(tips[1].message).to.equal('2nd message');
-		// The amount of the second element of the tips array should be the same as the transaction sent
-		expect(tips[1].amount).to.be.equal(amount);
-	});
-
-	it('should fail to send eth bigger than the balance', async function () {
-		const [, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender
-		const amount = ethers.utils.parseEther('9999');
-		// Perform another transaction
-		const tx = contract.connect(sender).sendTip('event message', 'name', { value: amount });
-		// Check that the transaction was reverted.
-		await expect(tx).to.be.reverted;
-	});
-});
-```
-
-With this in place (file `test/TipJar.js`) you are ready to run the tests.
-
-Run in the terminal
+Head over to your terminal and run tthe following command.
 
 ```bash
-$ npm run hardhat:test
+$ npm run hardhat node
 ```
 
-and see the results. Now you have confidence that the smart contract works as expeected. Is time to deploy this to a local network and work in the client application.
+This will ramp up a local ethreum network using hardhat and will show in the console a set of accounts and private keys that can be used for testing pruposes.
+
+These are 20 test accounts and addresses created for your. Each account is also rich! are loaded with 10000 ETH. (fake eth btw).
+
+Right now this is just an empty blockchain. There are no blocks nor smart contracts on it. But you want to create a new block and put the smart contract that you just created there, for that you need to create a little script that will use ethers.js power to compile and deploy.
+
+Open your editor to create the file `scripts/deploy.js`.
+
+```javascript
+const main = async () => {
+	const [deployer] = await hre.ethers.getSigners();
+	const accountBalance = await deployer.getBalance();
+
+	console.log('Deploying contracts with account: ', deployer.address);
+	console.log('Account balance: ', accountBalance.toString());
+
+	const Token = await hre.ethers.getContractFactory('TipJar');
+	const portal = await Token.deploy();
+	await portal.deployed();
+	console.log('TipJar address: ', portal.address);
+};
+
+const runMain = async () => {
+	try {
+		await main();
+		process.exit(0);
+	} catch (error) {
+		console.error(error);
+		process.exit(1);
+	}
+};
+
+runMain();
+```
+
+With this in had you're ready to deploy to the local network.
+
+## Deploying
+
+Go to a new terminal window and run this command
+
+```bash
+$ npm run hardhat:deploy
+```
+
+> Make sure to run this command at the root of the project folder and without stopping the local network.
+
+After that is is done, the smart contract will be deployed to the local network and will be ready to interact with it.
+
+> When the contract is deployed it use the first account that was created by the local network.
+
+If you check the output of the console, you'll see a message that contains the address of the contract, somethig like this:
+
+```bash
+Deploying contracts with account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Account balance: 10000000000000000000000
+TipJar address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+```
+
+The address under `TipJar address` is what you'll use in the client application to "talk" to the smart contract. You can think in this address like your API url.
+
+Now the contract is deployed and you have the blockchain address of it. Keep it safe to use it later in the web site.
+
+In the terminal that is running the local network, you'll see a message like this:
+
+```bash
+Contract deployment: TipJar
+Contract address: 0x5fbdb2315678afecb367f032d93f642f64180aa3
+Transaction: 0xe1f30eea14dd4ec3250a23fe26ee396d46689260cfa416301ec24c14a625d4d4
+From: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+Value: 0 ETH
+Gas used: 745919 of 745919
+Block #1: 0x1e9b1e2c715cda8a4cf21f029b0ee92df9c902e9af78ac6ab1207d10b794a49f
+
+```
+
+This shows you some information, like the contract name and the addressm but also the trasancation identifier that can be used to validate the trasnaction and also the account that perform the deployment (the owner).
+
+Is time to work on the Dapp!
