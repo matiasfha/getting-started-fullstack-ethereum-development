@@ -63,6 +63,14 @@ describe("TipJar", function () { //describe the main test
         await expect(tx).to.be.reverted;
     })
 
+    it('should react to the tip event', async function () {
+        const [, sender] = await ethers.getSigners(); // Get two addresses, the owner and the sender        
+        const amount = ethers.utils.parseEther("0.1");
+        const tipContract = contract.connect(sender);
+        const tx = await tipContract.sendTip('event message', 'name', { value: amount });
+        await tx.wait()
+        expect(tx).to.emit(contract, 'NewTip').withArgs(sender.address, 'event message', 'name', amount);
+    })
 
 
 
