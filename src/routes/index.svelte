@@ -14,6 +14,7 @@
 
 	let contract = null;
 	let allTips = [];
+	let sendingTip = false;
 
 	/* Setup the contract */
 
@@ -26,8 +27,27 @@
 				balance = await provider.getBalance(userAddress);
 				// update the tips
 				await getTips(); // update the tips
+				// Mining process end
+				sendingTip = false;
 			});
 		}
+	}
+
+	async function sendTip(event) {
+		sendingTip = true;
+		const formData = new FormData(event.target);
+		const data = {};
+		for (let field of formData) {
+			const [key, value] = field;
+			data[key] = value;
+		}
+		// perform the transaction
+		// get the signer of the transaction and a read-write instance of the contract
+		const rwContract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
+		const transaction = await rwContract.sendTip(data.message, data.name, {
+			value: ethers.utils.parseEther(data.amount)
+		});
+		await transaction.wait();
 	}
 
 	// Read the tips from the contract
@@ -99,6 +119,29 @@
 		<li>Current Network: {network.name}</li>
 		<li>Your current balance: {ethers.utils.formatEther(balance)} eth</li>
 	</ul>
+	<form
+		class="w-2/3 mx-auto border rounded-md border-indigo-200 flex flex-col gap-8 p-6 mt-4"
+		on:submit|preventDefault={sendTip}
+	>
+		<div class="grid grid-cols-2">
+			<label for="tipAmount"> Send me an ethereum tip! </label>
+			<input type="string" name="amount" placeholder="0.001" />
+		</div>
+		<div class="grid grid-cols-2">
+			<label for="tipName"> Your name </label>
+			<input type="text" name="name" placeholder="Name" />
+		</div>
+		<div class="grid grid-cols-2">
+			<label for="tipMessage"> A quick message </label>
+			<input type="text" name="message" placeholder="Message" />
+		</div>
+		<button
+			disabled={sendingTip}
+			type="submit"
+			class="bg-green-500 text-gray-50 shadow-md rounded-md px-2 py-2 text-center w-1/3 self-center hover:bg-green-600"
+			>{#if sendingTip} Sending... {:else} Send a tip! {/if}</button
+		>
+	</form>
 	<table class="mt-8 border-collapse table-auto w-2/3 mx-auto text-sm h-80 overflow-auto">
 		<thead>
 			<tr>
