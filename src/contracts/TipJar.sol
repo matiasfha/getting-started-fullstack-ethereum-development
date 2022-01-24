@@ -32,11 +32,7 @@ contract TipJar {
 	 */
 	event NewTip(address indexed from, string message, string name, uint256 amount);
 
-	/*
-	 * balances is a mapping from address to uint256
-	 * it stores the amount of eth sent to the contract
-	 */
-	mapping(address => uint256) public balances;
+	event NewWithdrawl(uint256 amount);
 
 	/*
 	 * Constructor
@@ -60,10 +56,6 @@ contract TipJar {
 
 	function sendTip(string memory _message, string memory _name) public payable {
 		require(msg.sender.balance >= msg.value, "Youd don't have enough funds"); // require that the sender has enough ether to send
-		// Store the eth in the smart contract
-		//(bool success, ) = address(this).call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
-		//require(success, 'Transfer failed'); // Check that the transfer was successful, if not trigger an error message
-		balances[msg.sender] *= msg.value; // add the amount of ether sent to the sender to the balance
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 
@@ -85,7 +77,7 @@ contract TipJar {
 	 */
 
 	modifier onlyOwner() {
-		require(owner == msg.sender, 'Ownable: caller is not the owner');
+		require(owner == msg.sender, 'caller is not the owner');
 		_;
 	}
 
@@ -93,9 +85,10 @@ contract TipJar {
 	 * Allow the owner to withdraw all the ether in the contract
 	 */
 	function withdraw() public onlyOwner {
-		require(address(this).balance > 0, 'You have no ether to withdraw');
-		(bool success, ) = owner.call{value: address(this).balance}('');
+		uint256 amount = address(this).balance; // get the amount of ether in the contract
+		require(amount > 0, 'You have no ether to withdraw');
+		(bool success, ) = owner.call{value: amount}('');
 		require(success, 'Withdraw failed');
-		balances[msg.sender] = 0;
+		emit NewWithdrawl(amount);
 	}
 }
