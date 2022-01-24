@@ -1,6 +1,6 @@
 # Lesson 06
 
-## Deployinhg to local Ethereum network
+## Deploying to local Ethereum network
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
