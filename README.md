@@ -1,4 +1,4 @@
-# Lesson 07
+# Lesson 08
 
 ## Ethereum Wallet
 
