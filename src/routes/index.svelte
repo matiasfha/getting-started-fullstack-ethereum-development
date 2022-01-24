@@ -1,21 +1,65 @@
 <script>
 	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
+
+	import TipJarABI from '../artifacts/src/contracts/TipJar.sol/TipJar.json';
+
 	let userAddress = null;
 	let network = null;
 	let balance = null;
 	let isConnected = false;
+	let provider = null;
+
+	let contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+
+	let contract = null;
+	let allTips = [];
+
+	/* Setup the contract */
+
+	async function setupContract() {
+		if (isConnected && provider) {
+			contract = new ethers.Contract(contractAddress, TipJarABI.abi, provider);
+
+			contract.on('NewTip', async () => {
+				// update balance
+				balance = await provider.getBalance(userAddress);
+				// update the tips
+				await getTips(); // update the tips
+			});
+		}
+	}
+
+	// Read the tips from the contract
+	async function getTips() {
+		if (isConnected) {
+			const tips = await contract.getAllTips(); // use the getAllTips function to get all the tips
+			allTips = [
+				...tips.map((item) => {
+					// parse the tips and store them in the allTips array
+					return {
+						address: item.sender,
+						timestamp: new Date(item.timestamp * 1000).toLocaleDateString(),
+						message: item.message,
+						name: item.name,
+						amount: ethers.utils.formatEther(item.amount.toString())
+					};
+				})
+			];
+		}
+	}
 
 	/* Basic account setup */
 	async function setup(accounts) {
 		userAddress = accounts[0]; // update the state
 		// Get and update the ethereum provider
 		try {
-			const provider = new ethers.providers.Web3Provider(window.ethereum);
+			provider = new ethers.providers.Web3Provider(window.ethereum);
 			network = await provider.getNetwork();
 			balance = await provider.getBalance(userAddress);
-
 			isConnected = true;
+			await setupContract();
+			await getTips();
 		} catch (e) {
 			console.error(e);
 		}
@@ -55,6 +99,38 @@
 		<li>Current Network: {network.name}</li>
 		<li>Your current balance: {ethers.utils.formatEther(balance)} eth</li>
 	</ul>
+	<table class="mt-8 border-collapse table-auto w-2/3 mx-auto text-sm h-80 overflow-auto">
+		<thead>
+			<tr>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>address</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Name</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Message</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Timestamp</th
+				>
+				<th class="border-b border-gray-600 font-medium p-4 pl-8 pt-0 pb-3 text-gray-400 text-left"
+					>Amount</th
+				>
+			</tr>
+		</thead>
+		<tbody>
+			{#each allTips as item}
+				<tr>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.address}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.name}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.message}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.timestamp}</td>
+					<td class="border-b border-gray-700  p-4 pl-8 text-gray-500">{item.amount} eth</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 {:else}
 	<button
 		class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8 text-center"
