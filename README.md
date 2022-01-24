@@ -1,4 +1,4 @@
-# Lesson 06
+# Lesson 07
 
 ## Deploying to local Ethereum network
 
