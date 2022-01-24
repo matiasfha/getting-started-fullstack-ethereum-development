@@ -114,9 +114,10 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 - [03 - Solidity Variables](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson03/README.md)
 - [04 - Transfer Money](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson04/README.md)
 - [05 - Testing the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson05/README.md)
-- [06 - Deploying to local Ethereum network](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson06/README.md)
-- [07 - Setting up Metamask](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson07/README.md)
-- [08 - Connecting to the account](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson08/README.md)
+- [06 - Improvements and security: Modifiers](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson06/README.md)
+- [07 - Deploying to local Ethereum network](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson07/README.md)
+- [08 - Setting up Metamask](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson08/README.md)
+- [09 - Connecting to the account](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson09/README.md)
 
 ## Contributors ✨
 
