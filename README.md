@@ -1,90 +1,104 @@
-# Lesson 08
+# Lesson 10
 
-## Connecting the web to the blockchain
+## Get network information
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-The first step in this part of the journey, will be to setup a simple UI that allow you to connect the current user to the blockchain through it's wallet.
+Now the UI is capable to connect to the Ethereum network by using the wallet, but we need to more things to continue.
 
-To do this, let's write some code.
+1.- Avoid re-connecting every time the browser is refreshed
+2.- Get more information about the user and the network.
 
-Sveltekit applications works by using a file system routing method, meaning that you need to create files under the `src/routes/` folder and those will be then reflected as routes (urls) in your app. Let's keep ti simple and just use the default route here, open `src/routes/index.svelte` and delete the content of it.
-
-You're first step will be create a button that allow the user to "sing-in" to your new dapp and allow the UI to react to that showing a different content if the authorization process was successful.
-
-```svelte
-<script>
-	let userAddress = null;
-</script>
-
-{#if userAddress}
-	<p class="text-xl text-green-600">
-		Successfullly connected with account: <strong>{userAddress}</strong>
-	</p>
-{:else}
-	<button class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8 text-center"
-		>Connect with Wallet</button
-	>
-{/if}
-```
-
-This little snippet of code will render a button if the `userAddress` state variable is `null` or a message otherwise.
-
-Let's add an function to react to the click event
-
-```svelte
-<script>
-	let userAddress = null;
-
-	async function connectWallet() {}
-</script>
-
-{#if userAddress}
-	<p class="text-xl text-green-600">
-		Successfullly connected with account: <strong>{userAddress}</strong>
-	</p>
-{:else}
-	<button
-		class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8 text-center"
-		on:click={connectWallet}>Connect with Wallet</button
-	>
-{/if}
-```
-
-Now, is time to start working with the wallet. Metamask injects an object named `ethereum` into the global `window` object. So the first step is to check that `window.ethereum` is available.
-If that is true, is time to request access to the ethereum account, for that you can use the methods provided by the `window.ethereum` object.
+For the first, let's run a little function every time the component is mounted.
 
 ```javascript
-window.ethereum.request({ method: 'eth_requestAccounts'} })
-```
-
-That will return an array of accounts that are available, pick the first one sincee that is the choosen one in Metamask, an update the state to reflect that the user is connected.
-
-```svelte
-<script>
-	let userAddress = null;
-
-	async function connectWallet() {
-		if (window.ethereum) {
-			// ethereum is an object injected by the wallet. Let's check if is available
-			const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); // use the request method to get the accounts, aka logging in to Metamask
-			if (accounts.length > 0) {
-				// it returns an array of accounts, it should have at least 1 element
-				userAddress = accounts[0]; // update the state
-			} else {
-				alert('No ethereum accounts found');
-			}
-		} else {
-			alert('No ethereum Wallet found');
+onMount(async () => {
+	if (window.ethereum) {
+		const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Just get the accounts but without permissions
+		if (accounts.length > 0) {
+			userAddress = accounts[0]; // Update the userAddress state variable
 		}
 	}
-</script>
+});
+```
 
-{#if userAddress}
+Now, let's read some more information like:
+
+- The user balance
+- The network that the user is currently connected
+
+Let's add this as state variables too
+
+```javascript
+let network = null;
+let balance = null;
+let isConnected = false;
+
+onMount(async () => {
+	if (window.ethereum) {
+		const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Just get the accounts but without permissions
+		if (accounts.length > 0) {
+			userAddress = accounts[0]; // Update the userAddress state variable
+			const provider = new ethers.providers.Web3Provider(window.ethereum);
+			network = await provider.getNetwork();
+			balance = await provider.getBalance(userAddress);
+			isConnected = true;
+		}
+	}
+});
+```
+
+The only issue with this is that the same actions we added when the user re-load the page are required to be done when the user connect the wallet for the first time `connectWallet` function.
+
+So we can extract this code to it's own function an reuse it.
+
+```javascript
+async function connectWallet() {
+	if (window.ethereum) {
+		// ethereum is an object injected by the wallet. Let's check if is available
+		const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); // use the request method to get the accounts, aka logging in to Metamask
+		if (accounts.length > 0) {
+			await setup(accounts);
+		} else {
+			alert('No ethereum accounts found');
+		}
+	} else {
+		alert('No ethereum Wallet found');
+	}
+}
+
+// Let's avoid clicking connect every time and check if the wallet was already connected
+onMount(async () => {
+	if (window.ethereum) {
+		const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // get the accounts
+		if (accounts.length > 0) {
+			await setup(accounts);
+		}
+	}
+});
+async function setup(accounts) {
+	userAddress = accounts[0]; // update the state
+	// Get and update the ethereum provider
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	network = await provider.getNetwork();
+	balance = await provider.getBalance(userAddress);
+	isConnected = true;
+}
+```
+
+Now let's display the information in the HTML.
+Here you'll show the network name and the current balance for the account. To do that you'll need to format the value (that comes like a BigNumber) into a readable number by using `formatEther` function from `ethers.js` utilities
+
+```svelte
+{#if isConnected}
 	<p class="text-xl text-green-600">
 		Successfullly connected with account: <strong>{userAddress}</strong>
 	</p>
+	<ul>
+		<li>Current Network: {network.name}</li>
+		<li>Your current balance: {ethers.utils.formatEther(balance)} eth</li>
+	</ul>
 {:else}
 	<button
 		class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8 text-center"
@@ -93,17 +107,7 @@ That will return an array of accounts that are available, pick the first one sin
 {/if}
 ```
 
-You can test this out by running the client application, go to your terminal an run
+You may be wondering why the different request methiods `eth_accounts` vs `eth_requestAccounts`
 
-```bash
-$ npm run dev
-```
-
-That will start a dev server, in the browser open `http://localhost:3000` and you'll see the button. Now you can interact with it.
-
-![](./lessons-asets/app-01.png)
-![](./lessons-asets/app-02.png)
-
-![](./lessons-asets/app-03.png)
-
-![](./lessons-asets/app-04.png)
+- `eth_requestAccounts` This request cause the wallet to popup to ask the user to allow the request. You should only request user's accounts in response to user actions like a button click.
+- `eth_accounts` Just return the list of addresses owned by the client.
