@@ -32,6 +32,17 @@ contract TipJar {
 	 */
 	event NewTip(address indexed from, string message, string name, uint256 amount);
 
+	/*
+	 * balances is a mapping from address to uint256
+	 * it stores the amount of eth sent to the contract
+	 */
+	mapping(address => uint256) public balances;
+
+	/*
+	 * Constructor
+	 * it is called when the contract is deployed
+	 * it will set the owner of the contract
+	 */
 	constructor() {
 		owner = payable(msg.sender); // set the contract createor based in who instantitiated it
 	}
@@ -49,8 +60,10 @@ contract TipJar {
 
 	function sendTip(string memory _message, string memory _name) public payable {
 		require(msg.sender.balance >= msg.value, "Youd don't have enough funds"); // require that the sender has enough ether to send
-		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
-		require(success, 'Transfer failed'); // Check that the transfer was successful, if not trigger an error message
+		// Store the eth in the smart contract
+		//(bool success, ) = address(this).call{value: msg.value}(''); // send the amount of eth specified in msg.value and set the gast limit to 2000 units
+		//require(success, 'Transfer failed'); // Check that the transfer was successful, if not trigger an error message
+		balances[msg.sender] *= msg.value; // add the amount of ether sent to the sender to the balance
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 
@@ -64,5 +77,25 @@ contract TipJar {
 	 */
 	function getAllTips() public view returns (Tip[] memory) {
 		return tips;
+	}
+
+	/**
+	 * A modifier function that ensure that an action is made only by the owner of the contract
+	 * Throws if called by any account other than the owner.
+	 */
+
+	modifier onlyOwner() {
+		require(owner == msg.sender, 'Ownable: caller is not the owner');
+		_;
+	}
+
+	/*
+	 * Allow the owner to withdraw all the ether in the contract
+	 */
+	function withdraw() public onlyOwner {
+		require(address(this).balance > 0, 'You have no ether to withdraw');
+		(bool success, ) = owner.call{value: address(this).balance}('');
+		require(success, 'Withdraw failed');
+		balances[msg.sender] = 0;
 	}
 }
