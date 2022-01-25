@@ -1,103 +1,140 @@
-# 🚢 Deploying to a live test network
+# 🎉 Welcome on board!
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-There are several Ethereum test networks like Ropsten, Rinkeby and Kovan that you can use to deploy your contract to have it publicly available without having to use the mainnet and real ETH.
-In this course you'll deploy to Rinkeby netwok (but, the process is the same for the other networks).
+## 🚌 Getting starting with Ethereum Development
 
-The first step will be update your Metamask Wallet to connect to the Rinkeby network.
+- [Demo app can be found here](https://crypto-tip-jar-course-demo.vercel.app/)
 
-![](./lessons-assets/metamask-rinkeby.png)
+In this coures you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
 
-Next, you'll need some test/fake Ethere to use for testing the Dapp in the network, for that you'll need to use a [faucet like this one](https://www.rinkebyfaucet.com/). Just visit that faucet and add your wallet address.
+Lastly, you'll learn how to deploy your dapp to the blockchain.
 
-> Would be a good idea to create a new address only for testing purposes. Like the one I'm using that I called "Developer".
+## 👨🏻‍💻 Course summary
 
-Enter the wallet address and click. Send Me ETH button
-![](./lessons-assets/faucet.png)
+Ok. Are you ready? Cool, this will be quite a journey but fun and full of challenges. A few this that you'll be able to learn.
 
-Then you can visit the Rinkeby Etherscan to check the status of the transaction
+- How to setup SvelteKit.
+- How write an smart contract with Solidity.
+- How to configure an Ethereum development environment.
+- How to test an smart contract using javascript.
+- How to connect a web application to a wallet.
+- How to interact with a deployed smart contract.
+- How to deploy an smart contract.
 
-![](./lessons-assets/etherscan.png)
+## 👨🏻‍💻Who Am I?
 
-After the transaction is confirmed, you'll see some funds in your wallet
+👋 I [Matías Hernández](https://matiashernandez.dev), father, developer, podcaster, writer and instructor.
 
-## Setup the deploy enviroment.
+I started my journey many years ago (even before jQuery became a thing), though this years I tried many different things but web developmet has always been my passion. During the last 10 years I officialy worked as "Softare Engineer" or "Developer" (the role name depends on the company 🤷‍♂️) for many different projects. During this years I collected ideas, concepts and knowledge that I try to share in different mediums to help other developers to level up their careers.
 
-To be able to deployu to the network (including testnets and mainnet) you can use a service like [Infura](https://infura.io/dashboard/ethereum/cbdf7c5eee8b4e2b91e76b77ffd34533/settings) or [Alchemy](https://www.alchemyapi.io/).
+I love what I do and I try to bring the same passion to the content creation trough courses at [egghead.io](https://matiasfha.dev/egghead), articles en [FreeCodeCamp](https://matiasfha.dev/fcces), [my blog](https://matiashernandez.dev), [Cloudinary](https://mediajams.dev/author/matias-hernandez) and other publicationss and also with my podcasts [Café con Tech](https://www.cafecon.tech/) & [Control Remoto](https://www.controlremoto.io/) and finally thorugh my [newsletter](https://microbytes.dev).
 
-This services will ease the process of deployment the smart contract by providing the necessary tools make the required peer-to-peer connections. This process can take hours or days to sync with all the nodes in the blockchain and can use too much bandwith. This services solves this problem by providing the infreastructure to make it quick and cost effective.
+Find me in twitter as [@matiasfha](https://twitter.com/matiasfha)
 
-The process is similar for both services. In this course you'll use Alchemy.
+## ⏰ Before the course
 
-Create an account with Alchemy and get your API key for the testnet.
+The main requisits to start with ethereum development is an "intermediate" knowledege on javascript and web development in general, the idea is to bring you into this new and excinting world from scratch!
 
-![](./lessons-assets/alchemy.png)
+### 🛠 Requirements
 
-Now you have your API KEY you need to update the hardhat configuration to add the new network.
+This are the things you need to susccessfully go through this course
 
-> The API URL can be grabbed from the Alchemy dashboard, then you'll need your private rinkenyu key from metamask.
-> To get your private key (DONT SHARE IT) you can grab it from "Account Details" > "Export Private Key"
-> The private key is required because deploying a contract is a transaction and to perform that transaction you need to "login" into the blockchain.
+#### Sytem Requirements
 
-```javascript
-require('@nomiclabs/hardhat-waffle');
-require('dotenv').config();
+- [git](https://git-scm.com/) v2.13 or above
+- [NodeJS](https://nodejs.org/) `12 || 14 || 15 || 16`
+- [npm](https://www.npmjs.com/) v6 or superior
+- Install [Metamask](https://metamask.io/) (this will also be done through the course )
 
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
-module.exports = {
-	solidity: '0.8.4',
-	paths: {
-		artifacts: './src/artifacts',
-		sources: './src/contracts'
-	},
-	networks: {
-		hardhat: {
-			chainId: 1337 // To be able to work with metamask
-		},
-		rinkeby: {
-			url: process.env.ALCHEMY_URL,
-			accounts: [process.env.ALCHEMY_RINKEBY_ACCOUNT_KEY]
-		}
-	}
-};
+This tools need to be part of your system, you can check each version in the terminal
+
+```shell
+$ git --version
+$ node --version
+$ npm --version
 ```
 
-Is a good idea to save the API key into your `.env` file
+#### Configuration
 
-Now your good to go. You'll only need to go to your terminal an run
+> If you like, you can fork this repository so you can store your progress.
 
-```bash
-$ npm run hardhat:deploy:rinkeby
+- [ ] Clonse the repository
+
+```shell
+git clone https://github.com/matiasfha/crypto-tip-jar-course-demo
 ```
 
-> Remember: The account that you are using to deploy the contract will be the **owner** of the same, this account is the one that will be authorized to withdraw the funds of the contract.
+- [ ] Install the dependencies
 
-Wait for the script to finish and copy the new contract address into your `.env` file.
+```shell
+cd crypto-tip-jar-course-demo
+npm install
+```
 
-### Deploy the Web Client to Vercel.
+> this can take a few minutes
 
-Last step to be able to use your shiny new Dapp is to deploy the web client.
+If you have any problem during this process, please [fille an issue](https://github.com/matiasfha/crypto-tip-jar-course-demo/issues/new).
 
-To do that SvelteKit use an `adapter`.
+#### Execute the project
 
-An adapter is an small plugin that thake the build app as input and generate the output rerquired for deployment to a particular target.
+The `main` branch hold the final project ready to be tested, if you want to run locally to check what you'll build you can do it by
 
-By default, all projects are configured with `@sveltejs/adapter-auto`, which detects the production environment and select the appropiate adapter if possible.
+```shell
+npm run start
+```
 
-Currently this adapter supports Cloudflare Pages, Netlify and Vercel.
+This will:
 
-In this course you'll deploy to [Vercel](https://vercel.com/) so, there is not further configurations required.
+- spawn a local ethereum network
+- compile and locally deploy the smart contract
+- Run the contract tests
+- run the web application and open your browser
 
-Create a github repository if you haven't already and a Vercel account to.
+> Now you just need to import an account into metamask to test the application locally
+> This will be shown through the course
 
-In Vercel dashboard go to "New Project" and Import the Git Repository. Vercel will immediatly pick the required configuration for it, but you need to set your environment variables first.
+### ❓ How to run each lesson
 
-Go to "Environment Variables" and add the same that you have in the `.env` file.
+Each video lesson have a companion code that you'll be able to find in a corresponding branch named as `lesson-XX`.
 
-After that you'll save to click "Deploy".
+You can navigate through the branches to review the resulting code to follow the video lesson.
 
-Wait for deploy to finish and Voila!. You have a fullstack Ethereum Dapp running!
+## 📝 About the course
+
+### Lessons structure
+
+Each lesson will show you a little step towards the en goals. Also each lesson have it's own branch and it's own Readme file that will give you some resources and written content related with the video lesson.
+
+#### List of lessons
+
+- [01 - Initial Setup](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson01/README.md)
+- [02 - Smart Contracts](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson02/README.md)
+- [03 - Solidity Variables](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson03/README.md)
+- [04 - Transfer Money](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson04/README.md)
+- [05 - Testing the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson05/README.md)
+- [06 - Improvements and security: Modifiers](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson06/README.md)
+- [07 - Deploying to local Ethereum network](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson07/README.md)
+- [08 - Setting up Metamask](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson08/README.md)
+- [09 - Connecting to the account](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson09/README.md)
+- [10 - Get network information](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson10/README.md)
+- [11 - Setup communication with the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson11/README.md)
+- [12 - Send a tip!](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson12/README.md)
+- [13 - Withdraw](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson13/README.md)
+- [14 - Withdraw](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson14/README.md)
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
