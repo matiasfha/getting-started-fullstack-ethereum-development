@@ -118,6 +118,10 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 - [07 - Deploying to local Ethereum network](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson07/README.md)
 - [08 - Setting up Metamask](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson08/README.md)
 - [09 - Connecting to the account](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson09/README.md)
+- [10 - Get network information](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson10/README.md)
+- [11 - Setup communication with the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson11/README.md)
+- [12 - Send a tip!](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson12/README.md)
+- [13 - Withdraw](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson13/README.md)
 
 ## Contributors ✨
 

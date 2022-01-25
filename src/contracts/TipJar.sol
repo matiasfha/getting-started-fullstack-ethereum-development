@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity ^0.8.4; //same as hardhat.config.js
 
 import 'hardhat/console.sol'; // This allow you to use console.log
 
 contract TipJar {
-	uint256 totalTips; // store the number of the tips received;
+	uint256 public totalTips; // an integer public variable
 
-	address payable owner; //owner of the contract
+	address payable public owner; // identify the owner (the address) of the contract
 
 	/*
 	 * Store the "Tip" data in a structure
@@ -32,9 +32,18 @@ contract TipJar {
 	 */
 	event NewTip(address indexed from, string message, string name, uint256 amount);
 
+	event NewWithdrawl(uint256 amount);
+
+	/*
+	 * Constructor
+	 * it is called when the contract is deployed
+	 * it will set the owner of the contract
+	 */
 	constructor() {
-		owner = payable(msg.sender); // set the contract creator based in who instantiated it
+		owner = payable(msg.sender); // set the contract createor based in who instantitiated it
 	}
+
+	// Functions
 
 	/*
 	 * public funtion (like a getter) that returns the total number of tips
@@ -46,10 +55,7 @@ contract TipJar {
 	}
 
 	function sendTip(string memory _message, string memory _name) public payable {
-		// Check sender balance to be more thant the amount that they want to transfer
-		require(msg.sender.balance >= msg.value, "You don't have enough eth to send");
-		(bool success, ) = owner.call{value: msg.value}(''); // send the amount of eth to the owner of the contract
-		require(success, 'Failed to send the money'); // Check that the transfer was successful, if not trigger an error message
+		require(msg.sender.balance >= msg.value, "Youd don't have enough funds"); // require that the sender has enough ether to send
 		totalTips += 1; //increase the amount of tips
 		tips.push(Tip(msg.sender, _message, _name, block.timestamp, msg.value)); // Store the tip
 
@@ -63,5 +69,26 @@ contract TipJar {
 	 */
 	function getAllTips() public view returns (Tip[] memory) {
 		return tips;
+	}
+
+	/**
+	 * A modifier function that ensure that an action is made only by the owner of the contract
+	 * Throws if called by any account other than the owner.
+	 */
+
+	modifier onlyOwner() {
+		require(owner == msg.sender, 'caller is not the owner');
+		_;
+	}
+
+	/*
+	 * Allow the owner to withdraw all the ether in the contract
+	 */
+	function withdraw() public onlyOwner {
+		uint256 amount = address(this).balance; // get the amount of ether in the contract
+		require(amount > 0, 'You have no ether to withdraw');
+		(bool success, ) = owner.call{value: amount}('');
+		require(success, 'Withdraw failed');
+		emit NewWithdrawl(amount);
 	}
 }
