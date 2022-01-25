@@ -11,6 +11,7 @@
 	let provider = null;
 
 	let contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+	let amItheOwner = false;
 
 	let contract = null;
 	let allTips = [];
@@ -21,7 +22,8 @@
 	async function setupContract() {
 		if (isConnected && provider) {
 			contract = new ethers.Contract(contractAddress, TipJarABI.abi, provider);
-
+			const contractOwner = await contract.owner();
+			amItheOwner = ethers.utils.getAddress(contractOwner) === ethers.utils.getAddress(userAddress);
 			contract.on('NewTip', async () => {
 				// update balance
 				balance = await provider.getBalance(userAddress);
@@ -80,6 +82,9 @@
 			isConnected = true;
 			await setupContract();
 			await getTips();
+			window.ethereum.on('accountsChanged', (accounts) => {
+				window.location.reload();
+			});
 		} catch (e) {
 			console.error(e);
 		}
@@ -135,6 +140,9 @@
 			<label for="tipMessage"> A quick message </label>
 			<input type="text" name="message" placeholder="Message" />
 		</div>
+		{#if amItheOwner}
+			<p class="text-xl text-red-600">You are the owner of the contract</p>
+		{/if}
 		<button
 			disabled={sendingTip}
 			type="submit"

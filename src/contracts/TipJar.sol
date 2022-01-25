@@ -7,7 +7,7 @@ import 'hardhat/console.sol'; // This allow you to use console.log
 contract TipJar {
 	uint256 public totalTips; // an integer public variable
 
-	address payable owner; // identify the owner (the address) of the contract
+	address payable public owner; // identify the owner (the address) of the contract
 
 	/*
 	 * Store the "Tip" data in a structure
