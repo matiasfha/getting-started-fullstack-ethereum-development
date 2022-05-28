@@ -5,10 +5,10 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Now the UI is capable to connect to the Ethereum network by using the wallet, but we need to more things to continue.
+Now the UI is capable to connect to the Ethereum network by using the wallet, but we need two more things to continue.
 
-1.- Avoid re-connecting every time the browser is refreshed
-2.- Get more information about the user and the network.
+1. Avoid re-connecting every time the browser is refreshed
+2. Get more information about the user and the network.
 
 For the first, let's run a little function every time the component is mounted.
 
