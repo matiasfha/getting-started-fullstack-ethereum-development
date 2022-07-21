@@ -14,9 +14,9 @@ module.exports = {
     hardhat: {
       chainId: 1337 // To be able to work with metamask
     },
-    rinkeby: {
+    goerli: {
       url: process.env.ALCHEMY_URL,
-      accounts: [process.env.ALCHEMY_RINKEBY_ACCOUNT_KEY]
+      accounts: [process.env.ALCHEMY_PRIVATE_KEY]
     }
   }
 };

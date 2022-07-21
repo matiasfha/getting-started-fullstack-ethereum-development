@@ -1,0 +1,8 @@
+{
+    "workbench.activityBar.visible": false,
+    "workbench.statusBar.visible": false,
+    "workbench.tips.enabled": false,
+    "breadcrumbs.enabled": false,
+    "gitlens.currentLine.enabled": false,
+    "github.copilot.inlineSuggest.enable": false
+}
