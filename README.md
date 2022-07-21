@@ -1,11 +1,18 @@
 # 🎉 Welcome on board!
 
+<p align="center">
+<img src="https://user-images.githubusercontent.com/282006/165596793-4ea31519-a730-43c3-a3c8-5e1259b179ec.png" data-canonical-src="https://user-images.githubusercontent.com/282006/165596793-4ea31519-a730-43c3-a3c8-5e1259b179ec.png" width="200"
+     />
+  </p>
+
+
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## 🚌 Getting starting with Ethereum Development
 
-- [Demo app can be found here](https://crypto-tip-jar-course-demo.vercel.app/)
+- [Demo app can be found here](https://crypto-tip-jar-course-demo.vercel.app/ | width=100)
 
 In this coures you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
 
@@ -23,7 +30,10 @@ Ok. Are you ready? Cool, this will be quite a journey but fun and full of challe
 - How to interact with a deployed smart contract.
 - How to deploy an smart contract.
 
-## 👨🏻‍💻Who Am I?
+## 👨🏻‍💻 Who Am I?
+<p align="center">
+<img src="https://github.com/matiasfha.png" width="200" />
+</p>
 
 👋 I [Matías Hernández](https://matiashernandez.dev), father, developer, podcaster, writer and instructor.
 
