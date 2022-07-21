@@ -11,7 +11,7 @@
 		"hardhat": "hardhat --config hardhat.config.cjs",
 		"hardhat:compile": "npm run hardhat compile",
 		"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
-		"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js -- --network rinkeby",
+		"hardhat:deploy:testnet": "npm run hardhat run scripts/deploy.js -- --network goerli",
 		"hardhat:test": "npm run hardhat test"
 	},
 	"devDependencies": {

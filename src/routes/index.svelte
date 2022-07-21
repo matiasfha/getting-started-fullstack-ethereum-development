@@ -11,6 +11,7 @@
 	let provider = null;
 
 	let contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+	
 	let amItheOwner = false;
 
 	let contract = null;
