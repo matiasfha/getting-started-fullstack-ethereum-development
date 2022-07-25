@@ -12,7 +12,7 @@
 
 ## 🚌 Getting starting with Ethereum Development
 
-- [Demo app can be found here]([https://crypto-tip-jar-course-demo.vercel.app](https://getting-started-fullstack-ethereum-development.vercel.app/))
+- [Demo app can be found here](https://crypto-tip-jar-course-demo.vercel.app](https://getting-started-fullstack-ethereum-development.vercel.app/)
 
 In this coures you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
 
