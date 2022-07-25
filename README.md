@@ -132,7 +132,7 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 - [11 - Setup communication with the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson11/README.md)
 - [12 - Send a tip!](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson12/README.md)
 - [13 - Withdraw](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson13/README.md)
-- [14 - Withdraw](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson14/README.md)
+- [14 - Deploy](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson14/README.md)
 
 ## Contributors ✨
 
