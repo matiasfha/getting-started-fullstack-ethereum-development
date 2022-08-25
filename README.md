@@ -12,11 +12,16 @@
 
 ## 🚌 Getting starting with Ethereum Development
 
-- [Demo app can be found here](https://crypto-tip-jar-course-demo.vercel.app](https://getting-started-fullstack-ethereum-development.vercel.app/)
+- [Demo app can be found here](https://getting-started-fullstack-ethereum-development.vercel.app/)
 
 In this coures you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
 
 Lastly, you'll learn how to deploy your dapp to the blockchain.
+
+> **Important** 
+> SvelteKit is still in beta. Expect bugs! Read more here, and track progress towards 1.0 here.
+> This course was recorded pointing to the version 1.0.0-next.437 of Svelte kit 
+> It will be updated after sveltekit reach version 1.0.0 
 
 ## 👨🏻‍💻 Course summary
 
@@ -73,19 +78,19 @@ $ npm --version
 - [ ] Clonse the repository
 
 ```shell
-git clone https://github.com/matiasfha/crypto-tip-jar-course-demo
+git clone https://github.com/matiasfha/getting-started-fullstack-ethereum-development.git
 ```
 
 - [ ] Install the dependencies
 
 ```shell
-cd crypto-tip-jar-course-demo
+cd getting-started-fullstack-ethereum-development.git
 npm install
 ```
 
 > this can take a few minutes
 
-If you have any problem during this process, please [fille an issue](https://github.com/matiasfha/crypto-tip-jar-course-demo/issues/new).
+If you have any problem during this process, please [fille an issue](https://github.com/matiasfha/getting-started-fullstack-ethereum-development/issues/new).
 
 #### Execute the project
 

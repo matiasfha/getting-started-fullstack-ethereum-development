@@ -2,7 +2,7 @@
 	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
 
-	import TipJarABI from '../artifacts/src/contracts/TipJar.sol/TipJar.json';
+	import TipJarABI from '../../artifacts/src/contracts/TipJar.sol/TipJar.json';
 
 	let userAddress = null;
 	let network = null;
