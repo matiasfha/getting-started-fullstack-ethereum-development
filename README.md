@@ -9,7 +9,7 @@ The first step in this part of the journey, will be to setup a simple UI that al
 
 To do this, let's write some code.
 
-Sveltekit applications works by using a file system routing method, meaning that you need to create files under the `src/routes/` folder and those will be then reflected as routes (urls) in your app. Let's keep ti simple and just use the default route here, open `src/routes/index.svelte` and delete the content of it.
+Sveltekit applications works by using a file system routing method, meaning that you need to create files under the `src/routes/` folder and those will be then reflected as routes (urls) in your app. Let's keep ti simple and just use the default route here, open `src/routes/+page.svelte` and delete the content of it.
 
 You're first step will be create a button that allow the user to "sing-in" to your new dapp and allow the UI to react to that showing a different content if the authorization process was successful.
 
@@ -99,7 +99,7 @@ You can test this out by running the client application, go to your terminal an 
 $ npm run dev
 ```
 
-That will start a dev server, in the browser open `http://localhost:3000` and you'll see the button. Now you can interact with it.
+That will start a dev server, in the browser open `http://localhost:5173` and you'll see the button. Now you can interact with it.
 
 ![](./lessons-asets/app-01.png)
 ![](./lessons-asets/app-02.png)
