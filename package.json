@@ -2,41 +2,39 @@
 	"name": "tip-jar",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
-		"package": "svelte-kit package",
-		"preview": "svelte-kit preview",
+		"dev": "vite dev",
+		"build": "vite build",
+		"package": "vite package",
+		"preview": "vite preview",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
 		"hardhat": "hardhat --config hardhat.config.cjs",
 		"hardhat:compile": "npm run hardhat compile",
-		"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
-		"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js -- --network rinkeby",
-		"hardhat:test": "npm run hardhat test"
+		"hardhat:test": "npm run hardhat test",
+		"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/adapter-vercel": "1.0.0-next.35",
-		"@sveltejs/kit": "next",
-		"autoprefixer": "^10.4.0",
-		"dotenv": "10.0.0",
+		"@sveltejs/kit": "1.0.0-next.436",
+		"autoprefixer": "^10.4.7",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^3.2.1",
+		"postcss": "^8.4.14",
+		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.4.1",
 		"prettier-plugin-svelte": "^2.4.0",
 		"svelte": "^3.44.0",
-		"svelte-preprocess": "^4.10.1",
-		"tailwindcss": "^3.0.7"
+		"svelte-preprocess": "^4.10.7",
+		"tailwindcss": "^3.1.5"
 	},
 	"type": "module",
 	"dependencies": {
-		"@nomiclabs/hardhat-ethers": "2.0.3",
-		"@nomiclabs/hardhat-waffle": "2.0.1",
-		"@walletconnect/web3-provider": "1.6.6",
-		"chai": "4.3.4",
+		"@nomiclabs/hardhat-ethers": "2.0.4",
+		"@nomiclabs/hardhat-waffle": "2.0.2",
+		"chai": "4.3.6",
 		"ethereum-waffle": "3.4.0",
-		"ethers": "5.5.2",
-		"hardhat": "2.8.0"
+		"ethers": "5.5.4",
+		"hardhat": "2.8.3"
 	}
 }
