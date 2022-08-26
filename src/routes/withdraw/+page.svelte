@@ -1,7 +1,7 @@
 <script>
 	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
-	import TipJarABI from '../artifacts/src/contracts/TipJar.sol/TipJar.json';
+	import TipJarABI from '../../artifacts/src/contracts/TipJar.sol/TipJar.json';
 	// this can be handled by an svelte store in a better way
 	let userAddress = null;
 	let provider = null;

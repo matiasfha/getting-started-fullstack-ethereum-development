@@ -3,6 +3,24 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
+## Important
+
+SvelteKit is still in beta. Expect bugs! Read more here, and track progress towards 1.0 here. 
+
+This lesson was recorded before the latest breaking changes, the content is still valid but it sometimes reference a file that does not exists anymore.
+
+Now: 
+`src/routes/index.svelte` is call `src/routes/+page.svelte`
+
+`src/routes/__layout.svelte` is call `src/routes/+layout.svelte`
+
+
+Everything else is 100% valid. This particular content will be updated when Sveltekit reach 1.0.0 stable.
+
+
+## Content
+
+
 There are several Ethereum test networks like Ropsten, Rinkeby and Kovan that you can use to deploy your contract to have it publicly available without having to use the mainnet and real ETH.
 In this course you'll deploy to Rinkeby netwok (but, the process is the same for the other networks).
 

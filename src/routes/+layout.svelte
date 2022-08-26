@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import '../app.postcss';
 </script>
 
 <div class="w-full h-screen bg-gray-200">
