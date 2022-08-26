@@ -10,6 +10,7 @@ Now:
 
 `src/routes/__layout.svelte` is call `src/routes/+layout.svelte`
 
+`src/routes/withdraw.svelte` is now `src/routes/withdraw/+page.svelte`
 
 Everything else is 100% valid. This particular content will be updated when Sveltekit reach 1.0.0 stable.
 
@@ -19,68 +20,132 @@ Everything else is 100% valid. This particular content will be updated when Svel
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Is time to interact with the contract, let's send some eth!
+Now your contract can collect ETH by receiving transactions using the client application. It's time to allow you to withdraw that amount to your own account.
 
-For this you'll need a form that is rendered only when the wallet is connected.
+To accomplish this you need a way to interact with the `withdraw` method from the contract. To do this you'll need to add a button to call the function, let's do this by creating a new route in the application.
 
-```svelte
-<form
-	class="w-2/3 mx-auto border rounded-md border-indigo-200 flex flex-col gap-8 p-6 mt-4"
-	on:submit|preventDefault={sendTip}
->
-	<div class="grid grid-cols-2">
-		<label for="tipAmount"> Send me an ethereum tip! </label>
-		<input type="string" name="amount" placeholder="0.001" />
+To create a new route you justt need to create a new **folder** with the name of the route you want and inside of it create a file that will hold the main logic of your route/screen/view: `+page.svelte`.
+
+With the route created let's update the main layout of the application to create a navigation menu by adding two anchors  that will allow you to navigate across the routes.
+
+```html
+<!-- +layout.svelte -->
+<script>
+	import '../app.postcss';
+</script>
+
+<div class="w-full h-screen bg-gray-200">
+	<ul class="flex flex-row pt-6 px-4 gap-12">
+		<li><a href="/" class="underline text-indigo-400">Tip Jar</a></li>
+		<li><a href="/withdraw" class="underline text-indigo-400">Withdraw</a></li>
+	</ul>
+	<div class="flex items-center flex-col p-32">
+		<slot />
 	</div>
-	<div class="grid grid-cols-2">
-		<label for="tipName"> Your name </label>
-		<input type="text" name="name" placeholder="Name" />
-	</div>
-	<div class="grid grid-cols-2">
-		<label for="tipMessage"> A quick message </label>
-		<input type="text" name="message" placeholder="Message" />
-	</div>
-	<button
-		disabled={sendingTip}
-		type="submit"
-		class="bg-green-500 text-gray-50 shadow-md rounded-md px-2 py-2 text-center w-1/3 self-center hover:bg-green-600"
-		>{#if sendingTip} Sending... {:else} Send a tip! {/if}</button
-	>
-</form>
+</div>
+
 ```
 
-This form use the `sendTip` function and gather some required information. On submit, it will read the `sendingTip` loading state variable and disable or enable the button
 
-Let's setup the `sendTip` function
+Now, go back to the new withdraw route file `src/routes/withdraw/+page.svelte` to write the logic required to perform the withdraw call.
 
-```javascript
-async function sendTip(event) {
-		sendingTip = true; // update the loading state
-		const formData = new FormData(event.target); // read the form data
-		const data = {};
-		for (let field of formData) {
-			const [key, value] = field;
-			data[key] = value;
+The logic for setup the wallet connection and communication with the contract is almost the same as beforee, so you can copy all the content of the previous route here.
+
+```diff
+...
+...
++    let amItheOwner = false;
+	
++	let contractBalance = null;
++	let isWithdrawing = false;
+
+	/* Setup the contract */
+	async function setupContract() {
+		if (isConnected && provider) {
+			contract = new ethers.Contract(contractAddress, TipJarABI.abi, provider);
++            const contractOwner = await contract.owner();
++            aItheOwner = ethers.utils.getAddress(contractOwner) === ethers.utils.getAddress(userAddress);
+            
++            contract.on('NewWithdrawl', async () => {
++                contractBalance = await provider.getBalance(contractAddress);
++                balance = await provider.getBalance(userAddress);
++                isWithdrawing = false;
++			});
 		}
-		// perform the transaction
-		// get the signer of the transaction and a read-write instance of the contract
-		const rwContract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
-		const transaction = await rwContract.sendTip(data.message, data.name, {
-			value: ethers.utils.parseEther(data.amount)
-		});
-		await transaction.wait(); // wait for the tranmsaction to be done.
+	}
+
+	/* Basic account setup */
+	async function setup(accounts) {
+		userAddress = accounts[0]; // update the state
+		// Get and update the ethereum provider
+		try {
+			...
+			...
++            contractBalance = await provider.getBalance(contractAddress); 
+			...
+			...
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
++    async function withdraw() {
++        if(isConnected) {
++            isWithdrawing = true;
++            const rwContract = new ethers.Contract(contractAddress, TipJarABI.abi, provider.getSigner());
++            const tx = await rwContract.withdraw();
++            await tx.wait();
++        }   
++    }
+</script>
+
+{#if isConnected}
++    <h1 class="text-3xl text-gray-800 p-8">Withdraw from the TipJar contract</h1>
+    <div class="text-sm text-gray-500 pb-4 flex flex-col gap-4">
+        <p class="text-xl text-green-600">
+			Successfullly connected with account: <strong>{userAddress}</strong>
+		</p> 
+        <ul>
+            <li>Current Network: {network.name}</li>
+            <li>Your current balance: {ethers.utils.formatEther(balance)} eth</li>
+            +<li>Current contract balance: {ethers.utils.formatEther(contractBalance)} eth</li>
+        </ul>
+
++        {#if amItheOwner}
++            {#if contractBalance.eq(0)}
++                <p class="text-xl text-red-600">There is no balance to withdraw</p>
++			{/if}
++            <button
++                class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8 text-center disabled:opacity-25"    
++                on:click={withdraw}
++                disabled={isWithdrawing || contractBalance.eq(0)}
++            >{isWithdrawing ? '...Withdrawing' : 'Withdraw'}</button>
++        {:else}
++            <p class="text-xl text-red-600">Only the owner of the contract can withdraw the balance</p>
++        {/if}
+    </div>
+...
+...
+{:else}
+	<button
+		class="bg-blue-600 text-gray-50 shadow-md rounded-md px-3 py-8 text-center"
+		on:click={connectWallet}>Connect with Wallet</button
+	>
+{/if}
 ```
+The main difference against the previous route will be that:
 
-When the trasnaction is successful, the `NewTip` event will be triggerd and you can re-read the tips there and also update the loading state.
+- You'll have a new variable named `amITheOwner` 
+- You'll the contract owner data to compare it with the current user 
+- The event listener will now listen for the `NewWithdraw` event. 
+- You'll get and display the contract balance.
+- There will be a new `withdraw` function
+- The UI will contract balance.
 
-By clicking the `Send a tip!` button, Metamask should popup to ask you form confirmation like this
+Check if the current user is the owner and if the balance is bigger than zero, if not display a message, otherwise show the withdraw function that call the withdraw function.
 
-![](./lessons-assets/metamask-confirm.png)
+Save, and check the browser.
 
-And after the mining process is done, the UI will update cleaning the form and rendering the new tip in the table.
+Change the user that is connected to the app to be the owner and you can test by clicking the button.
 
-![](./lessons-assets/tips-table.png)
-
-That's is!.. Your contract is now able to accept tips from anywhere and anyone with an Ethereum account. Nice right?
-
-Now.. how can you withdraw that eth?
+The UI will reflect the change by setting the contract balance to zero and increasing your balance.
