@@ -1,6 +1,4 @@
-require("@nomiclabs/hardhat-waffle");
-require('dotenv').config();
-
+require('@nomiclabs/hardhat-waffle');
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -12,7 +10,7 @@ module.exports = {
   },
   networks: {
     hardhat: {
-      chainId: 1337 // To be able to work with metamask
-    },
+      chainId: 1337
+    }
   }
 };
