@@ -1,5 +1,20 @@
 # Lesson 12
 
+## Important
+
+SvelteKit is still in beta. Expect bugs! Read more here, and track progress towards 1.0 here. 
+
+This lesson was recorded before the latest breaking changes, the content is still valid but it sometimes reference a file that does not exists anymore.
+
+Now: 
+`src/routes/index.svelte` is call `src/routes/+page.svelte`
+
+`src/routes/__layout.svelte` is call `src/routes/+layout.svelte`
+
+
+Everything else is 100% valid. This particular content will be updated when Sveltekit reach 1.0.0 stable.
+
+
 ## Send a tip!
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
