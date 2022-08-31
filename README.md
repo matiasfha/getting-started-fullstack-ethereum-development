@@ -13,8 +13,9 @@
 ## 🚌 Getting starting with Ethereum Development
 
 - [Demo app can be found here](https://getting-started-fullstack-ethereum-development.vercel.app/)
-
-In this coures you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
+- [Course on Egghead.io](https://egghead.io/courses/full-stack-web3-and-blockchain-development-on-ethereum-with-sveltekit-f522ceec)
+- 
+In this course you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
 
 Lastly, you'll learn how to deploy your dapp to the blockchain.
 
