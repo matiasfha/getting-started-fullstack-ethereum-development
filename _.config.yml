@@ -3,6 +3,7 @@ plugins:
 relative_links:
   enabled: true
   collections: true
+theme: midnight
 include:
   - docs/index.md
   - docs/01.md

@@ -1,6 +1,3 @@
----
-theme: midnight
----
 # 🎉 Welcome on board!
 
 <p align="center">
@@ -15,7 +12,9 @@ theme: midnight
 
 ## 🚌 Getting starting with Ethereum Development
 
-### 📽Check the Video [Course on Egghead.io](https://egghead.io/courses/full-stack-web3-and-blockchain-development-on-ethereum-with-sveltekit-f522ceec??af=4cexzz)
+### 📽 Check the Video [Course on Egghead.io](https://egghead.io/courses/full-stack-web3-and-blockchain-development-on-ethereum-with-sveltekit-f522ceec??af=4cexzz)
+
+
 - [Demo app can be found here](https://getting-started-fullstack-ethereum-development.vercel.app/)
  
 In this course you'll learn about the many moving parts required to start building a full stack (descentralized) application based on the Ethereum network. How to write an smart contract, write tests and how to interact with it through a web application.
@@ -128,32 +127,17 @@ Each lesson will show you a little step towards the en goals. Also each lesson h
 
 #### List of lessons
 
-- [01 - Initial Setup](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson01/README.md)
-- [02 - Smart Contracts](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson02/README.md)
-- [03 - Solidity Variables](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson03/README.md)
-- [04 - Transfer Money](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson04/README.md)
-- [05 - Testing the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson05/README.md)
-- [06 - Improvements and security: Modifiers](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson06/README.md)
-- [07 - Deploying to local Ethereum network](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson07/README.md)
-- [08 - Setting up Metamask](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson08/README.md)
-- [09 - Connecting to the account](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson09/README.md)
-- [10 - Get network information](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson10/README.md)
-- [11 - Setup communication with the contract](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson11/README.md)
-- [12 - Send a tip!](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson12/README.md)
-- [13 - Withdraw](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson13/README.md)
-- [14 - Deploy](https://github.com/matiasfha/crypto-tip-jar-course-demo/blob/lesson14/README.md)
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+- [01 - Initial Setup](/01.md)
+- [02 - Smart Contracts](/02.md)
+- [03 - Solidity Variables](/03.md)
+- [04 - Transfer Money](/04.md)
+- [05 - Testing the contract](/05.md)
+- [06 - Improvements and security: Modifiers](/06.md)
+- [07 - Deploying to local Ethereum network](/07.md)
+- [08 - Setting up Metamask](/08.md)
+- [09 - Connecting to the account](/09.md)
+- [10 - Get network information](/10.md)
+- [11 - Setup communication with the contract](/11.md)
+- [12 - Send a tip!](/12.md)
+- [13 - Withdraw](/13.md)
+- [14 - Deploy](/14.md)
