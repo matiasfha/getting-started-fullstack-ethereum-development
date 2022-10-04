@@ -1,0 +1,21 @@
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+include:
+  - docs/index.md
+  - docs/01.md
+  - docs/02.md
+  - docs/03.md
+  - docs/04.md
+  - docs/05.md
+  - docs/06.md
+  - docs/07.md
+  - docs/08.md
+  - docs/09.md
+  - docs/10.md
+  - docs/11.md
+  - docs/12.md
+  - docs/13.md
+  - docs/14.md
