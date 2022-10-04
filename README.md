@@ -1,40 +1,103 @@
-# create-svelte
+# Lesson 02
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Create your first smart contract
 
-## Creating a project
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-If you're seeing this, you've probably already done this step. Congrats!
+The first step in this journey will be get your hands into a new language to harness the power of the blockchain. I'm talking about [Solidity](https://soliditylang.org/)
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
+> This isn't a Solidity focused course but we will review some
+> concepts to get you up to speed with it.
 
-# create a new project in my-app
-npm init svelte@next my-app
+The first thing to notice is that Solidity is an statically-typed language created specifically to create smart contracts for the Ethereum network.
+
+An smart contract is like "real life" contract. Is a way to establish terms for an agreement. But the "smart" part it's because this type of contract is declared as machine code that is executed in a blockchain. This expand the idea of the original blockchain, Bitcon, aout sending and receiveing money without a centralized intermiediary to create trust and make possible to automate and dcentralize virtually any kinf of deal or transaction.
+
+Since the contracts run in the blockchain (like Ethereum network) they offer high security, trust, inmmutability and reliability.
+
+> Since the blockchain is immutable you have to be care on what are you deploying. After deployed it cannot be change and you'll need to deploy a new contract.
+
+For Solidity, a contract is a collection of code (a program) and data (the state) that lives inside the blockchain, it can be identify by its Ethereum address. You can leverage your previous knowledge and use some analogies to understand the smart contract.
+
+You can think on the contract as your "backend" or "server side" program. This server expose an API and store some data (the state) into the a databse (the blockchain), but the database is not written nor query with a different language like SQL, you can imagine that Solidity is automatically connected to the database and everything you deeclare (like a variable) is stored in the database.
+
+Let's see an siomple example
+
+- Create a file under `src/contracts/TipJar.sol`
+- Write the following
+
+```javascript
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.8.4; //same as hardhat.config.js
+
+import 'hardhat/console.sol'; // This allow you to use console.log
+
+contract TipJar {
+	uint256 public totalTips; // an integer public variable
+}
+
 ```
 
-> Note: the `@next` is temporary
+The first line tells you about the license for this source code, and is required for your Solidy code.
+The next line declares that this code was written for Solidty version `0.8.4` or newer. This pragma lines are common instructions for compilers to let them know how to treat the source code.
 
-## Developing
+Third line import an utility from `hardhat` package that let you use `console.log` to print data to the standard output.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+And finally the contract start. Very similar to a javascript class, the contract code lives under a `contract` block.
 
-```bash
-npm run dev
+## Testing
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+Since after you deploy something to the blockchain, it cannot be change you need to be sure that what your are deploying is actually what you want, for that, writting tests is the main path to get confidence on your code.
+
+Writing tests for smart contracts written under the hardhat development environment is done using Javascript (or Typescript) by leveraging the power of `Waffle`.
+
+`Waffle` is al library to write and test smart contracts that directly works with `ethers.js` and Chai matchers.
+
+First step is to add the `Waffle` plugin to your hardhat environment, edit the `hardhat.config.cjs`
+
+```javascript
+require('@nomiclabs/hardhat-waffle');
 ```
 
-## Building
+Now, to write the first test, create a file under `test/TipJar.js` and an empty `package.json` file. This `package.json` file is to let the tests play nice with the commonJS and ESModule configuration of the project.
 
-To create a production version of your app:
+Now, let's create the first test
 
-```bash
-npm run build
+```javascript
+const { expect } = require('chai');
+const { ethers } = require('hardhat');
+
+describe('TipJar', function () {
+	let contract;
+
+	it('Should deploy the contract and return 0 as totalTips', async function () {
+		const contractFactory = await ethers.getContractFactory('TipJar');
+		contract = await contractFactory.deploy();
+		await contract.deployed();
+		expect(await contract.totalTips()).to.equal(0);
+	});
+});
 ```
 
-You can preview the production build with `npm run preview`.
+But also configure hardhat to play along with esmodules, for that let's rename `hardhatconfig.js` to `hardhat.config.cjs` and setup some npm scripts
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.
+add this to your package.json file
+
+```javascript
+"hardhat": "hardhat --config hardhat.config.cjs",
+"hardhat:compile": "npm run hardhat compile",
+"hardhat:run": "npm run hardhat run scripts/run.js",
+"hardhat:deploy": "npm run hardhat run scripts/deploy.js -- --network localhost",
+"hardhat:deploy:rinkeby": "npm run hardhat run scripts/deploy.js --network rinkeby",
+"hardhat:test": "npm run hardhat test"
+```
+
+We still don't have the run and deploy scripts but we will add them soon.
+
+Let's run the test
+
+`npm run hardhat:test`
+
+The test will use hardhat to compile and mimic the deploy process
