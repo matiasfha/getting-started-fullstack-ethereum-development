@@ -34,11 +34,11 @@
 	"type": "module",
 	"dependencies": {
 		"@nomiclabs/hardhat-ethers": "2.0.3",
-		"@nomiclabs/hardhat-waffle": "2.0.1",
+		"@nomiclabs/hardhat-waffle": "2.0.5",
 		"@openzeppelin/contracts": "4.4.2",
 		"@walletconnect/web3-provider": "1.6.6",
 		"chai": "4.3.4",
-		"ethereum-waffle": "3.4.0",
+		"ethereum-waffle": "4.0.9",
 		"ethers": "5.5.2",
 		"hardhat": "2.8.0"
 	}
